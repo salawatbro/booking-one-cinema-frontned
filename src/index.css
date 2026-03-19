@@ -9,7 +9,6 @@
   --text-secondary: #555555;
   --text-tertiary: #888888;
   --accent: #16a34a;
-  --accent-hover: #15803d;
   --accent-light: #ecfdf5;
   --border: #d4d4d4;
   --border-light: #e5e5e5;
@@ -30,7 +29,6 @@
   --text-secondary: #a3a3a3;
   --text-tertiary: #737373;
   --accent: #22c55e;
-  --accent-hover: #16a34a;
   --accent-light: #052e16;
   --border: #262626;
   --border-light: #1c1c1c;
@@ -51,7 +49,6 @@
   --color-text-secondary: var(--text-secondary);
   --color-text-tertiary: var(--text-tertiary);
   --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
   --color-accent-light: var(--accent-light);
   --color-border: var(--border);
   --color-border-light: var(--border-light);
@@ -85,3 +82,28 @@ body {
 
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.skeleton-pulse {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ptr-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

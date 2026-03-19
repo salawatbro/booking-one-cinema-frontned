@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Clock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { Movie } from '@/types/api';
 import { formatDuration } from '@/lib/utils';
 
@@ -10,19 +11,17 @@ interface MovieCardProps {
 
 export function MovieCard({ movie, variant = 'grid' }: MovieCardProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   if (variant === 'featured') {
     return (
       <div className="relative flex-shrink-0 overflow-hidden rounded-lg" style={{ width: 'calc(100vw - 50px)' }}>
-        <button
-          onClick={() => navigate(`/movies/${movie.id}`)}
-          className="w-full"
-        >
+        <button onClick={() => navigate(`/movies/${movie.id}`)} className="w-full">
           <div className="aspect-[2/3] w-full bg-bg-secondary">
             {movie.poster_url ? (
               <img src={movie.poster_url} alt={movie.name} className="h-full w-full object-cover" loading="lazy" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-text-tertiary text-[12px]">No poster</div>
+              <div className="flex h-full w-full items-center justify-center text-text-tertiary text-[12px]">{t('movie.noPoster')}</div>
             )}
           </div>
         </button>
@@ -38,7 +37,7 @@ export function MovieCard({ movie, variant = 'grid' }: MovieCardProps) {
               className="bg-accent text-white text-[12px] font-semibold active:opacity-80 transition-opacity"
               style={{ padding: '7px 16px', borderRadius: 6 }}
             >
-              Bron qilish
+              {t('movie.book')}
             </button>
           </div>
         </div>
@@ -55,14 +54,14 @@ export function MovieCard({ movie, variant = 'grid' }: MovieCardProps) {
         {movie.poster_url ? (
           <img src={movie.poster_url} alt={movie.name} className="h-full w-full object-cover" loading="lazy" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-text-tertiary text-[10px]">No poster</div>
+          <div className="flex h-full w-full items-center justify-center text-text-tertiary text-[10px]">{t('movie.noPoster')}</div>
         )}
       </div>
       <div style={{ padding: '8px 10px 10px' }}>
         <h3 className="text-[13px] font-semibold text-text-primary leading-snug line-clamp-2">{movie.name}</h3>
         <div className="flex items-center gap-2 text-[11px] text-text-tertiary" style={{ marginTop: 4 }}>
           <span className="flex items-center gap-1"><Clock size={10} />{formatDuration(movie.duration)}</span>
-          <span className="text-accent font-medium">{movie.upcoming_showtimes_count} seans</span>
+          <span className="text-accent font-medium">{t('movie.showtimesAvailable', { count: movie.upcoming_showtimes_count })}</span>
         </div>
       </div>
     </button>

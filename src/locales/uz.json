@@ -1,0 +1,135 @@
+{
+  "nav": {
+    "home": "Bosh sahifa",
+    "schedule": "Seans",
+    "bookings": "Bronlar",
+    "profile": "Profil"
+  },
+  "header": {
+    "darkMode": "Qorong'i rejim",
+    "lightMode": "Yorug' rejim",
+    "selectLang": "Tilni tanlash",
+    "profile": "Profil"
+  },
+  "home": {
+    "search": "Kino qidirish...",
+    "searchLabel": "Kino qidirish",
+    "nowShowing": "Bugun ekranda",
+    "allMovies": "Barcha kinolar"
+  },
+  "movie": {
+    "book": "Bron qilish",
+    "showtimes": "Seanslar",
+    "showtimesAvailable": "{{count}} seans mavjud",
+    "notFound": "Kino topilmadi",
+    "noShowtimes": "Bu sana uchun seans topilmadi",
+    "noShowtimesDay": "Bu kunda seans topilmadi",
+    "noPoster": "No poster"
+  },
+  "seats": {
+    "screen": "Ekran",
+    "available": "Bo'sh",
+    "selected": "Tanlangan",
+    "booked": "Band",
+    "seatLabel": "Qator {{row}}, Joy {{number}}",
+    "seatBooked": "Qator {{row}}, Joy {{number}} (band)",
+    "seatSelected": "Qator {{row}}, Joy {{number}} (tanlangan)",
+    "seatsSelected": "{{count}} ta joy tanlandi",
+    "perSeat": "/joy",
+    "continue": "Davom etish"
+  },
+  "booking": {
+    "confirm": "Bronni tasdiqlash",
+    "selectedSeats": "Tanlangan joylar",
+    "row": "Qator {{row}}, Joy {{number}}",
+    "rowShort": "Q{{row}} / {{number}}",
+    "payment": "To'lov",
+    "ticketPrice": "Bilet narxi",
+    "seatsCount": "Joylar soni",
+    "total": "Jami",
+    "bookButton": "Bron qilish — {{price}}",
+    "id": "Bron #{{id}}",
+    "seats": "Joylar ({{count}} ta)",
+    "downloadTicket": "Chiptani yuklash",
+    "cancel": "Bronni bekor qilish",
+    "notFound": "Topilmadi",
+    "ticketCode": "Chipta kodi"
+  },
+  "bookings": {
+    "title": "Bronlarim",
+    "all": "Barchasi",
+    "pending": "Kutilmoqda",
+    "confirmed": "Tasdiqlangan",
+    "cancelled": "Bekor",
+    "cancelledFull": "Bekor qilingan",
+    "notFound": "Bronlar topilmadi",
+    "viewBookings": "Bronlarimni ko'rish"
+  },
+  "payment": {
+    "title": "To'lov",
+    "timeLeft": "To'lov uchun qolgan vaqt",
+    "amount": "To'lov summasi",
+    "selectMethod": "To'lov usulini tanlang",
+    "clickPay": "Click orqali to'lash",
+    "paymePay": "Payme orqali to'lash",
+    "warning": "Agar 15 daqiqa ichida to'lov amalga oshirilmasa, broningiz avtomatik bekor qilinadi.",
+    "expired": "Vaqt tugadi",
+    "expiredMessage": "To'lov uchun ajratilgan 15 daqiqa tugadi. Broningiz bekor qilindi. Iltimos, qaytadan bron qiling.",
+    "goHome": "Bosh sahifaga qaytish",
+    "myBookings": "Bronlarim"
+  },
+  "success": {
+    "title": "To'lov qabul qilindi!",
+    "message": "Broningiz tasdiqlandi. Chiptangizni ko'rsatib kinodan bahramand bo'ling.",
+    "ticketCode": "Chipta kodi",
+    "downloadTicket": "Chiptani yuklash"
+  },
+  "profile": {
+    "language": "Til",
+    "myBookings": "Bronlarim",
+    "movieRequests": "Kino so'rovlarim",
+    "requestMovie": "Kino so'rash",
+    "logout": "Chiqish",
+    "total": "Jami",
+    "confirmed": "Tasdiqlangan",
+    "pending": "Kutilmoqda",
+    "cancelled": "Bekor"
+  },
+  "movieRequest": {
+    "title": "Kino so'rovlarim",
+    "new": "Yangi",
+    "notFound": "So'rovlar topilmadi",
+    "formTitle": "Kino so'rash",
+    "formDescription": "Ko'rmoqchi bo'lgan kinongizni yozing. Adminlar ko'rib chiqib, jadvalga qo'shadi.",
+    "movieName": "Kino nomi",
+    "movieNamePlaceholder": "Masalan: Inception 2",
+    "releaseYear": "Chiqarilgan yil",
+    "trailerLink": "Trailer havolasi",
+    "preferredDate": "Qulay sana",
+    "preferredTime": "Qulay vaqt",
+    "guestsCount": "Mehmonlar soni",
+    "submit": "So'rov yuborish",
+    "guests": "{{count}} kishi"
+  },
+  "common": {
+    "back": "Orqaga",
+    "currency": "so'm",
+    "hour": "s",
+    "minute": "d"
+  },
+  "months": {
+    "0": "Yanvar", "1": "Fevral", "2": "Mart", "3": "Aprel",
+    "4": "May", "5": "Iyun", "6": "Iyul", "7": "Avgust",
+    "8": "Sentabr", "9": "Oktabr", "10": "Noyabr", "11": "Dekabr"
+  },
+  "days": {
+    "0": "Yak", "1": "Dush", "2": "Sesh", "3": "Chor", "4": "Pay", "5": "Jum", "6": "Shan"
+  },
+  "status": {
+    "confirmed": "Tasdiqlangan",
+    "pending": "Kutilmoqda",
+    "cancelled": "Bekor qilingan",
+    "approved": "Tasdiqlangan",
+    "rejected": "Rad etilgan"
+  }
+}

@@ -1,5 +1,9 @@
+import { useState, useCallback, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/hooks/useTheme';
+import { ToastProvider } from '@/hooks/useToast';
+import { SplashScreen } from '@/components/SplashScreen';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Header } from '@/components/Header';
 import { BottomNav } from '@/components/BottomNav';
 import { HomePage } from '@/pages/HomePage';
@@ -16,28 +20,52 @@ import { MovieRequestsPage } from '@/pages/MovieRequestsPage';
 import { MovieRequestFormPage } from '@/pages/MovieRequestFormPage';
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        tg.requestFullscreen();
+        tg.disableVerticalSwipes();
+      }
+    }
+  }, []);
+
+  const handleSplashFinish = useCallback(() => {
+    setShowSplash(false);
+  }, []);
+
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <div className="min-h-screen bg-bg">
-          <Header />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/movies/:id" element={<MovieDetailPage />} />
-            <Route path="/seats/:showtimeId" element={<SeatSelectionPage />} />
-            <Route path="/booking-confirm/:showtimeId" element={<BookingConfirmPage />} />
-            <Route path="/payment" element={<PaymentPage />} />
-            <Route path="/booking-success" element={<BookingSuccessPage />} />
-            <Route path="/bookings" element={<BookingsPage />} />
-            <Route path="/bookings/:id" element={<BookingDetailPage />} />
-            <Route path="/schedule" element={<SchedulePage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/movie-requests" element={<MovieRequestsPage />} />
-            <Route path="/movie-requests/new" element={<MovieRequestFormPage />} />
-          </Routes>
-          <BottomNav />
-        </div>
-      </BrowserRouter>
+      <ToastProvider>
+        {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
+        <ErrorBoundary>
+          <BrowserRouter>
+            <div className="min-h-screen bg-bg">
+              <Header />
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/movies/:id" element={<MovieDetailPage />} />
+                <Route path="/seats/:showtimeId" element={<SeatSelectionPage />} />
+                <Route path="/booking-confirm/:showtimeId" element={<BookingConfirmPage />} />
+                <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/booking-success" element={<BookingSuccessPage />} />
+                <Route path="/bookings" element={<BookingsPage />} />
+                <Route path="/bookings/:id" element={<BookingDetailPage />} />
+                <Route path="/schedule" element={<SchedulePage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/movie-requests" element={<MovieRequestsPage />} />
+                <Route path="/movie-requests/new" element={<MovieRequestFormPage />} />
+              </Routes>
+              <BottomNav />
+            </div>
+          </BrowserRouter>
+        </ErrorBoundary>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

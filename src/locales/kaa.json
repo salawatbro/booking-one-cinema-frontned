@@ -1,0 +1,135 @@
+{
+  "nav": {
+    "home": "Bas bet",
+    "schedule": "Seans",
+    "bookings": "Bronlar",
+    "profile": "Profil"
+  },
+  "header": {
+    "darkMode": "Qaranǵı rejim",
+    "lightMode": "Jarıq rejim",
+    "selectLang": "Tildi tanlań",
+    "profile": "Profil"
+  },
+  "home": {
+    "search": "Kino izlew...",
+    "searchLabel": "Kino izlew",
+    "nowShowing": "Búgin ekranda",
+    "allMovies": "Barlıq kinolar"
+  },
+  "movie": {
+    "book": "Bron qılıw",
+    "showtimes": "Seanslar",
+    "showtimesAvailable": "{{count}} seans bar",
+    "notFound": "Kino tabılmadı",
+    "noShowtimes": "Bul sáne ushın seans tabılmadı",
+    "noShowtimesDay": "Bul kúni seans tabılmadı",
+    "noPoster": "Poster joq"
+  },
+  "seats": {
+    "screen": "Ekran",
+    "available": "Bos",
+    "selected": "Tanlangan",
+    "booked": "Band",
+    "seatLabel": "Qatar {{row}}, Orın {{number}}",
+    "seatBooked": "Qatar {{row}}, Orın {{number}} (band)",
+    "seatSelected": "Qatar {{row}}, Orın {{number}} (tanlangan)",
+    "seatsSelected": "{{count}} orın tanlangan",
+    "perSeat": "/orın",
+    "continue": "Dawam etiw"
+  },
+  "booking": {
+    "confirm": "Brondı tastıyıqlaw",
+    "selectedSeats": "Tanlangan orınlar",
+    "row": "Qatar {{row}}, Orın {{number}}",
+    "rowShort": "Q{{row}} / {{number}}",
+    "payment": "Tólem",
+    "ticketPrice": "Bilet bahası",
+    "seatsCount": "Orınlar sanı",
+    "total": "Jámi",
+    "bookButton": "Bron qılıw — {{price}}",
+    "id": "Bron #{{id}}",
+    "seats": "Orınlar ({{count}})",
+    "downloadTicket": "Biletti júklew",
+    "cancel": "Brondı biykar qılıw",
+    "notFound": "Tabılmadı",
+    "ticketCode": "Bilet kodı"
+  },
+  "bookings": {
+    "title": "Bronlarım",
+    "all": "Barlıǵı",
+    "pending": "Kútilmekte",
+    "confirmed": "Tastıyıqlangan",
+    "cancelled": "Biykar",
+    "cancelledFull": "Biykar qılınǵan",
+    "notFound": "Bronlar tabılmadı",
+    "viewBookings": "Bronlarımdı kóriw"
+  },
+  "payment": {
+    "title": "Tólem",
+    "timeLeft": "Tólemge qalǵan waqıt",
+    "amount": "Tólem summası",
+    "selectMethod": "Tólem usılın tanlań",
+    "clickPay": "Click arqalı tólew",
+    "paymePay": "Payme arqalı tólew",
+    "warning": "Eger 15 minut ishinde tólem ámelge asırılmasa, bronıńız avtomatik biykar qılınadı.",
+    "expired": "Waqıt tuwdı",
+    "expiredMessage": "Tólem ushın ajıratılǵan 15 minut tuwdı. Bronıńız biykar qılındı. Qaytadan bron qılıń.",
+    "goHome": "Bas betke qaytıw",
+    "myBookings": "Bronlarım"
+  },
+  "success": {
+    "title": "Tólem qabıl qılındı!",
+    "message": "Bronıńız tastıyıqlangan. Biletińizdi kórsetip kinodan bahramand bolıń.",
+    "ticketCode": "Bilet kodı",
+    "downloadTicket": "Biletti júklew"
+  },
+  "profile": {
+    "language": "Til",
+    "myBookings": "Bronlarım",
+    "movieRequests": "Kino sorawlarım",
+    "requestMovie": "Kino soraw",
+    "logout": "Shıǵıw",
+    "total": "Jámi",
+    "confirmed": "Tastıyıqlangan",
+    "pending": "Kútilmekte",
+    "cancelled": "Biykar"
+  },
+  "movieRequest": {
+    "title": "Kino sorawlarım",
+    "new": "Jańa",
+    "notFound": "Sorawlar tabılmadı",
+    "formTitle": "Kino soraw",
+    "formDescription": "Kórgiński kelgen kinońızdı jazıń. Adminler qarap shıǵıp, jádiwelge qosadı.",
+    "movieName": "Kino atı",
+    "movieNamePlaceholder": "Mısalı: Inception 2",
+    "releaseYear": "Shıqqan jılı",
+    "trailerLink": "Treyler siltemesi",
+    "preferredDate": "Qolaylı sáne",
+    "preferredTime": "Qolaylı waqıt",
+    "guestsCount": "Mıymanlar sanı",
+    "submit": "Soraw jiberiw",
+    "guests": "{{count}} adam"
+  },
+  "common": {
+    "back": "Artqa",
+    "currency": "som",
+    "hour": "s",
+    "minute": "m"
+  },
+  "months": {
+    "0": "Yanvar", "1": "Fevral", "2": "Mart", "3": "Aprel",
+    "4": "May", "5": "Iyun", "6": "Iyul", "7": "Avgust",
+    "8": "Sentyabr", "9": "Oktyabr", "10": "Noyabr", "11": "Dekabr"
+  },
+  "days": {
+    "0": "Jek", "1": "Dúy", "2": "Sey", "3": "Sár", "4": "Pey", "5": "Jum", "6": "Sen"
+  },
+  "status": {
+    "confirmed": "Tastıyıqlangan",
+    "pending": "Kútilmekte",
+    "cancelled": "Biykar qılınǵan",
+    "approved": "Maqullangan",
+    "rejected": "Ret etilgen"
+  }
+}

@@ -1,58 +1,64 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sun, Moon, ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/hooks/useTheme';
 import { mockProfile } from '@/mock/data';
 import { cn } from '@/lib/utils';
-
-const languages = [
-  { code: 'uz', short: 'UZ' },
-  { code: 'ru', short: 'RU' },
-  { code: 'kk', short: 'KZ' },
-] as const;
+import { languages } from '@/lib/constants';
 
 export function Header() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { theme, toggle } = useTheme();
-  const [selectedLang, setSelectedLang] = useState(mockProfile.language);
   const [langOpen, setLangOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const currentLang = languages.find((l) => l.code === selectedLang) || languages[0];
+  const currentLang = languages.find((l) => l.code === i18n.language) || languages[0];
   const initials = (mockProfile.first_name[0] || '') + (mockProfile.last_name?.[0] || '');
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  const changeLang = (code: string) => {
+    i18n.changeLanguage(code);
+    localStorage.setItem('language', code);
+    setLangOpen(false);
+  };
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
+    const handleClick = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setLangOpen(false);
     };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLangOpen(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
   }, []);
 
   return (
-    <div className="flex items-center justify-between h-14 border-b border-border" style={{ padding: '0 20px' }}>
-      {/* Left: Theme toggle */}
+    <div className="flex items-center justify-between border-b border-border" style={{ padding: '0 20px', paddingTop: isMobile ? 'calc(env(safe-area-inset-top, 0px) + 38px)' : '0px', minHeight: isMobile ? 'calc(56px + env(safe-area-inset-top, 0px) + 38px)' : '56px' }}>
       <button
         onClick={toggle}
+        aria-label={theme === 'light' ? t('header.darkMode') : t('header.lightMode')}
         className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-bg-secondary active:opacity-70 transition-opacity"
       >
-        {theme === 'light' ? (
-          <Moon size={18} className="text-text-secondary" />
-        ) : (
-          <Sun size={18} className="text-yellow-400" />
-        )}
+        {theme === 'light' ? <Moon size={18} className="text-text-secondary" /> : <Sun size={18} className="text-yellow-400" />}
       </button>
 
-      {/* Center: Logo */}
       <button onClick={() => navigate('/')} className="flex items-center gap-1.5 absolute left-1/2 -translate-x-1/2">
         <span className="text-[16px] font-bold text-text-primary">BookingOne</span>
       </button>
 
-      {/* Right: Language + Profile */}
       <div className="flex items-center gap-2">
         <div className="relative" ref={ref}>
           <button
             onClick={() => setLangOpen(!langOpen)}
+            aria-label={t('header.selectLang')}
+            aria-expanded={langOpen}
             className="flex items-center gap-0.5 h-8 px-2 rounded-md hover:bg-bg-secondary active:opacity-70 transition-opacity"
           >
             <span className="text-[12px] font-semibold text-text-secondary">{currentLang.short}</span>
@@ -64,10 +70,10 @@ export function Header() {
               {languages.map((lang) => (
                 <button
                   key={lang.code}
-                  onClick={() => { setSelectedLang(lang.code); setLangOpen(false); }}
+                  onClick={() => changeLang(lang.code)}
                   className={cn(
                     'w-full px-3 py-2 text-[12px] font-semibold text-center transition-colors',
-                    selectedLang === lang.code ? 'text-accent bg-accent-light' : 'text-text-primary hover:bg-bg-secondary',
+                    i18n.language === lang.code ? 'text-accent bg-accent-light' : 'text-text-primary hover:bg-bg-secondary',
                   )}
                 >
                   {lang.short}
@@ -79,6 +85,7 @@ export function Header() {
 
         <button
           onClick={() => navigate('/profile')}
+          aria-label={t('header.profile')}
           className="h-8 w-8 flex items-center justify-center rounded-full bg-accent text-white text-[11px] font-bold"
         >
           {initials}

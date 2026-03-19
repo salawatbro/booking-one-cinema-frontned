@@ -75,7 +75,7 @@ export interface Profile {
   last_name: string | null;
   username: string | null;
   phone: string | null;
-  language: 'uz' | 'ru' | 'kk';
+  language: import('@/lib/constants').LangCode;
   bookings_count?: number;
 }
 
@@ -89,4 +89,10 @@ export interface BookingStats {
 export interface CalendarDay {
   date: string;
   count: number;
+}
+
+export interface ContactInfo {
+  phone: string;
+  telegram: string;
+  instagram: string;
 }

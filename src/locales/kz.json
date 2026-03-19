@@ -1,0 +1,135 @@
+{
+  "nav": {
+    "home": "Басты бет",
+    "schedule": "Сеанс",
+    "bookings": "Брондар",
+    "profile": "Профиль"
+  },
+  "header": {
+    "darkMode": "Қараңғы режим",
+    "lightMode": "Жарық режим",
+    "selectLang": "Тілді таңдау",
+    "profile": "Профиль"
+  },
+  "home": {
+    "search": "Кино іздеу...",
+    "searchLabel": "Кино іздеу",
+    "nowShowing": "Бүгін экранда",
+    "allMovies": "Барлық кинолар"
+  },
+  "movie": {
+    "book": "Брон жасау",
+    "showtimes": "Сеанстар",
+    "showtimesAvailable": "{{count}} сеанс бар",
+    "notFound": "Кино табылмады",
+    "noShowtimes": "Бұл күнге сеанс жоқ",
+    "noShowtimesDay": "Бұл күні сеанс табылмады",
+    "noPoster": "Постер жоқ"
+  },
+  "seats": {
+    "screen": "Экран",
+    "available": "Бос",
+    "selected": "Таңдалған",
+    "booked": "Бос емес",
+    "seatLabel": "Қатар {{row}}, Орын {{number}}",
+    "seatBooked": "Қатар {{row}}, Орын {{number}} (бос емес)",
+    "seatSelected": "Қатар {{row}}, Орын {{number}} (таңдалған)",
+    "seatsSelected": "{{count}} орын таңдалды",
+    "perSeat": "/орын",
+    "continue": "Жалғастыру"
+  },
+  "booking": {
+    "confirm": "Бронды растау",
+    "selectedSeats": "Таңдалған орындар",
+    "row": "Қатар {{row}}, Орын {{number}}",
+    "rowShort": "Қ{{row}} / {{number}}",
+    "payment": "Төлем",
+    "ticketPrice": "Билет бағасы",
+    "seatsCount": "Орын саны",
+    "total": "Барлығы",
+    "bookButton": "Брон жасау — {{price}}",
+    "id": "Брон #{{id}}",
+    "seats": "Орындар ({{count}})",
+    "downloadTicket": "Билетті жүктеу",
+    "cancel": "Бронды болдырмау",
+    "notFound": "Табылмады",
+    "ticketCode": "Билет коды"
+  },
+  "bookings": {
+    "title": "Брондарым",
+    "all": "Барлығы",
+    "pending": "Күтілуде",
+    "confirmed": "Расталған",
+    "cancelled": "Болдырмау",
+    "cancelledFull": "Болдырылмаған",
+    "notFound": "Брондар табылмады",
+    "viewBookings": "Брондарымды көру"
+  },
+  "payment": {
+    "title": "Төлем",
+    "timeLeft": "Төлемге қалған уақыт",
+    "amount": "Төлем сомасы",
+    "selectMethod": "Төлем әдісін таңдаңыз",
+    "clickPay": "Click арқылы төлеу",
+    "paymePay": "Payme арқылы төлеу",
+    "warning": "Егер 15 минут ішінде төлем жасалмаса, броныңыз автоматты болдырылмайды.",
+    "expired": "Уақыт аяқталды",
+    "expiredMessage": "Төлемге берілген 15 минут аяқталды. Броныңыз болдырылмады. Қайтадан брон жасаңыз.",
+    "goHome": "Басты бетке оралу",
+    "myBookings": "Брондарым"
+  },
+  "success": {
+    "title": "Төлем қабылданды!",
+    "message": "Броныңыз расталды. Билетіңізді көрсетіп, кинодан ләззат алыңыз.",
+    "ticketCode": "Билет коды",
+    "downloadTicket": "Билетті жүктеу"
+  },
+  "profile": {
+    "language": "Тіл",
+    "myBookings": "Брондарым",
+    "movieRequests": "Кино сұраныстарым",
+    "requestMovie": "Кино сұрау",
+    "logout": "Шығу",
+    "total": "Барлығы",
+    "confirmed": "Расталған",
+    "pending": "Күтілуде",
+    "cancelled": "Болдырмау"
+  },
+  "movieRequest": {
+    "title": "Кино сұраныстарым",
+    "new": "Жаңа",
+    "notFound": "Сұраныстар табылмады",
+    "formTitle": "Кино сұрау",
+    "formDescription": "Көргіңіз келетін киноны жазыңыз. Әкімшілер қарап, кестеге қосады.",
+    "movieName": "Кино атауы",
+    "movieNamePlaceholder": "Мысалы: Inception 2",
+    "releaseYear": "Шыққан жылы",
+    "trailerLink": "Трейлер сілтемесі",
+    "preferredDate": "Қолайлы күн",
+    "preferredTime": "Қолайлы уақыт",
+    "guestsCount": "Қонақтар саны",
+    "submit": "Сұраныс жіберу",
+    "guests": "{{count}} адам"
+  },
+  "common": {
+    "back": "Артқа",
+    "currency": "сум",
+    "hour": "с",
+    "minute": "м"
+  },
+  "months": {
+    "0": "Қаңтар", "1": "Ақпан", "2": "Наурыз", "3": "Сәуір",
+    "4": "Мамыр", "5": "Маусым", "6": "Шілде", "7": "Тамыз",
+    "8": "Қыркүйек", "9": "Қазан", "10": "Қараша", "11": "Желтоқсан"
+  },
+  "days": {
+    "0": "Жек", "1": "Дүй", "2": "Сей", "3": "Сәр", "4": "Бей", "5": "Жұм", "6": "Сен"
+  },
+  "status": {
+    "confirmed": "Расталған",
+    "pending": "Күтілуде",
+    "cancelled": "Болдырылмаған",
+    "approved": "Мақұлданған",
+    "rejected": "Қабылданбаған"
+  }
+}

@@ -1,4 +1,4 @@
-import type { Movie, Showtime, Booking, SeatMap, BookingStats, Profile, MovieRequest } from '@/types/api';
+import type { Movie, Showtime, Booking, SeatMap, BookingStats, Profile, MovieRequest, ContactInfo } from '@/types/api';
 
 export const mockMovies: Movie[] = [
   {
@@ -340,3 +340,9 @@ export const mockMovieRequests: MovieRequest[] = [
     created_at: '2026-03-15T09:00:00+05:00',
   },
 ];
+
+export const mockContactInfo: ContactInfo = {
+  phone: '+998 90 123 45 67',
+  telegram: 'https://t.me/bookingone_uz',
+  instagram: 'https://instagram.com/bookingone_uz',
+};

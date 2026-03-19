@@ -1,0 +1,135 @@
+{
+  "nav": {
+    "home": "Главная",
+    "schedule": "Сеансы",
+    "bookings": "Брони",
+    "profile": "Профиль"
+  },
+  "header": {
+    "darkMode": "Тёмная тема",
+    "lightMode": "Светлая тема",
+    "selectLang": "Выбор языка",
+    "profile": "Профиль"
+  },
+  "home": {
+    "search": "Поиск фильмов...",
+    "searchLabel": "Поиск фильмов",
+    "nowShowing": "Сейчас в прокате",
+    "allMovies": "Все фильмы"
+  },
+  "movie": {
+    "book": "Забронировать",
+    "showtimes": "Сеансы",
+    "showtimesAvailable": "{{count}} сеансов",
+    "notFound": "Фильм не найден",
+    "noShowtimes": "Сеансов на эту дату нет",
+    "noShowtimesDay": "Сеансов на этот день нет",
+    "noPoster": "Нет постера"
+  },
+  "seats": {
+    "screen": "Экран",
+    "available": "Свободно",
+    "selected": "Выбрано",
+    "booked": "Занято",
+    "seatLabel": "Ряд {{row}}, Место {{number}}",
+    "seatBooked": "Ряд {{row}}, Место {{number}} (занято)",
+    "seatSelected": "Ряд {{row}}, Место {{number}} (выбрано)",
+    "seatsSelected": "Выбрано {{count}} мест",
+    "perSeat": "/место",
+    "continue": "Продолжить"
+  },
+  "booking": {
+    "confirm": "Подтверждение брони",
+    "selectedSeats": "Выбранные места",
+    "row": "Ряд {{row}}, Место {{number}}",
+    "rowShort": "Р{{row}} / {{number}}",
+    "payment": "Оплата",
+    "ticketPrice": "Цена билета",
+    "seatsCount": "Количество мест",
+    "total": "Итого",
+    "bookButton": "Забронировать — {{price}}",
+    "id": "Бронь #{{id}}",
+    "seats": "Места ({{count}})",
+    "downloadTicket": "Скачать билет",
+    "cancel": "Отменить бронь",
+    "notFound": "Не найдено",
+    "ticketCode": "Код билета"
+  },
+  "bookings": {
+    "title": "Мои брони",
+    "all": "Все",
+    "pending": "Ожидание",
+    "confirmed": "Подтверждено",
+    "cancelled": "Отменено",
+    "cancelledFull": "Отменено",
+    "notFound": "Брони не найдены",
+    "viewBookings": "Мои брони"
+  },
+  "payment": {
+    "title": "Оплата",
+    "timeLeft": "Осталось времени для оплаты",
+    "amount": "Сумма оплаты",
+    "selectMethod": "Выберите способ оплаты",
+    "clickPay": "Оплатить через Click",
+    "paymePay": "Оплатить через Payme",
+    "warning": "Если оплата не будет произведена в течение 15 минут, бронь будет автоматически отменена.",
+    "expired": "Время истекло",
+    "expiredMessage": "15 минут для оплаты истекли. Ваша бронь отменена. Пожалуйста, забронируйте заново.",
+    "goHome": "На главную",
+    "myBookings": "Мои брони"
+  },
+  "success": {
+    "title": "Оплата принята!",
+    "message": "Ваша бронь подтверждена. Покажите билет на входе в кинотеатр.",
+    "ticketCode": "Код билета",
+    "downloadTicket": "Скачать билет"
+  },
+  "profile": {
+    "language": "Язык",
+    "myBookings": "Мои брони",
+    "movieRequests": "Мои запросы",
+    "requestMovie": "Запросить фильм",
+    "logout": "Выйти",
+    "total": "Всего",
+    "confirmed": "Подтверждено",
+    "pending": "Ожидание",
+    "cancelled": "Отменено"
+  },
+  "movieRequest": {
+    "title": "Мои запросы",
+    "new": "Новый",
+    "notFound": "Запросы не найдены",
+    "formTitle": "Запросить фильм",
+    "formDescription": "Напишите фильм, который хотите посмотреть. Администраторы рассмотрят и добавят в расписание.",
+    "movieName": "Название фильма",
+    "movieNamePlaceholder": "Например: Inception 2",
+    "releaseYear": "Год выпуска",
+    "trailerLink": "Ссылка на трейлер",
+    "preferredDate": "Удобная дата",
+    "preferredTime": "Удобное время",
+    "guestsCount": "Количество гостей",
+    "submit": "Отправить запрос",
+    "guests": "{{count}} чел."
+  },
+  "common": {
+    "back": "Назад",
+    "currency": "сум",
+    "hour": "ч",
+    "minute": "м"
+  },
+  "months": {
+    "0": "Январь", "1": "Февраль", "2": "Март", "3": "Апрель",
+    "4": "Май", "5": "Июнь", "6": "Июль", "7": "Август",
+    "8": "Сентябрь", "9": "Октябрь", "10": "Ноябрь", "11": "Декабрь"
+  },
+  "days": {
+    "0": "Вс", "1": "Пн", "2": "Вт", "3": "Ср", "4": "Чт", "5": "Пт", "6": "Сб"
+  },
+  "status": {
+    "confirmed": "Подтверждено",
+    "pending": "Ожидание",
+    "cancelled": "Отменено",
+    "approved": "Одобрено",
+    "rejected": "Отклонено"
+  }
+}
