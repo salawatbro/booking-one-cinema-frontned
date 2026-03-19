@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/lib/queryClient';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { ToastProvider } from '@/hooks/useToast';
 import { SplashScreen } from '@/components/SplashScreen';
@@ -40,6 +42,7 @@ function App() {
   }, []);
 
   return (
+    <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <ToastProvider>
         {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
@@ -67,6 +70,7 @@ function App() {
         </ErrorBoundary>
       </ToastProvider>
     </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 

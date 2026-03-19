@@ -3,6 +3,7 @@ import { Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Movie } from '@/types/api';
 import { formatDuration } from '@/lib/utils';
+import { storageUrl } from '@/lib/api';
 
 interface MovieCardProps {
   movie: Movie;
@@ -19,7 +20,7 @@ export function MovieCard({ movie, variant = 'grid' }: MovieCardProps) {
         <button onClick={() => navigate(`/movies/${movie.id}`)} className="w-full">
           <div className="aspect-[2/3] w-full bg-bg-secondary">
             {movie.poster_url ? (
-              <img src={movie.poster_url} alt={movie.name} className="h-full w-full object-cover" loading="lazy" />
+              <img src={storageUrl(movie.poster_url)!} alt={movie.name} className="h-full w-full object-cover" loading="lazy" />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-text-tertiary text-[12px]">{t('movie.noPoster')}</div>
             )}
@@ -52,7 +53,7 @@ export function MovieCard({ movie, variant = 'grid' }: MovieCardProps) {
     >
       <div className="aspect-[2/3] w-full bg-bg-secondary">
         {movie.poster_url ? (
-          <img src={movie.poster_url} alt={movie.name} className="h-full w-full object-cover" loading="lazy" />
+          <img src={storageUrl(movie.poster_url)!} alt={movie.name} className="h-full w-full object-cover" loading="lazy" />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-text-tertiary text-[10px]">{t('movie.noPoster')}</div>
         )}

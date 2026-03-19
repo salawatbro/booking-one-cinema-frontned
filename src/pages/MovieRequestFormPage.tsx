@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Send, Film, Calendar, Clock, Users, Link, Hash } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTelegramBackButton } from '@/hooks/useTelegramBackButton';
+import { useCreateMovieRequest } from '@/hooks/useApi';
 
 export function MovieRequestFormPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const createMovieRequest = useCreateMovieRequest();
 
   useTelegramBackButton(() => navigate(-1));
 
@@ -17,7 +19,21 @@ export function MovieRequestFormPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/movie-requests');
+    createMovieRequest.mutate(
+      {
+        movie_name: form.movie_name,
+        movie_year: form.movie_year ? Number(form.movie_year) : undefined,
+        trailer_url: form.trailer_url || undefined,
+        preferred_date: form.preferred_date || undefined,
+        preferred_time: form.preferred_time || undefined,
+        guests_count: Number(form.guests_count),
+      },
+      {
+        onSuccess: () => {
+          navigate('/movie-requests');
+        },
+      },
+    );
   };
 
   const inputCls = 'w-full bg-bg-secondary border border-border text-[14px] text-text-primary placeholder:text-text-tertiary outline-none focus:border-accent transition-colors';
@@ -76,8 +92,19 @@ export function MovieRequestFormPage() {
           <input id="guests_count" type="number" required min={1} max={50} placeholder="5" value={form.guests_count} onChange={(e) => setForm({ ...form, guests_count: e.target.value })} className={inputCls} style={{ height: 44, padding: '0 12px', borderRadius: 6 }} />
         </div>
 
-        <button type="submit" className="w-full bg-accent text-white text-[14px] font-semibold flex items-center justify-center gap-2 active:opacity-80 transition-opacity" style={{ height: 48, borderRadius: 8 }}>
-          <Send size={14} /> {t('movieRequest.submit')}
+        {createMovieRequest.isError && (
+          <div className="bg-danger-light" style={{ marginBottom: 14, padding: '12px 14px', borderRadius: 8 }}>
+            <p className="text-[12px] text-danger">Error: {createMovieRequest.error.message}</p>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={createMovieRequest.isPending}
+          className="w-full bg-accent text-white text-[14px] font-semibold flex items-center justify-center gap-2 active:opacity-80 transition-opacity disabled:opacity-50"
+          style={{ height: 48, borderRadius: 8 }}
+        >
+          <Send size={14} /> {createMovieRequest.isPending ? t('movieRequest.submitting') : t('movieRequest.submit')}
         </button>
       </form>
     </div>

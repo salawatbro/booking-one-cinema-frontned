@@ -6,6 +6,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { mockProfile } from '@/mock/data';
 import { cn } from '@/lib/utils';
 import { languages } from '@/lib/constants';
+import { updateLanguage } from '@/lib/api';
 
 export function Header() {
   const navigate = useNavigate();
@@ -15,13 +16,18 @@ export function Header() {
   const ref = useRef<HTMLDivElement>(null);
 
   const currentLang = languages.find((l) => l.code === i18n.language) || languages[0];
-  const initials = (mockProfile.first_name[0] || '') + (mockProfile.last_name?.[0] || '');
+  const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+  const photoUrl = tgUser?.photo_url;
+  const initials = tgUser
+    ? (tgUser.first_name[0] || '') + (tgUser.last_name?.[0] || '')
+    : (mockProfile.first_name[0] || '') + (mockProfile.last_name?.[0] || '');
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   const changeLang = (code: string) => {
     i18n.changeLanguage(code);
     localStorage.setItem('language', code);
     setLangOpen(false);
+    updateLanguage(code).catch(() => {});
   };
 
   useEffect(() => {
@@ -86,9 +92,13 @@ export function Header() {
         <button
           onClick={() => navigate('/profile')}
           aria-label={t('header.profile')}
-          className="h-8 w-8 flex items-center justify-center rounded-full bg-accent text-white text-[11px] font-bold"
+          className="h-8 w-8 flex items-center justify-center rounded-full bg-accent text-white text-[11px] font-bold overflow-hidden"
         >
-          {initials}
+          {photoUrl ? (
+            <img src={photoUrl} alt="" className="h-full w-full object-cover" />
+          ) : (
+            initials
+          )}
         </button>
       </div>
     </div>

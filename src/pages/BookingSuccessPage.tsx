@@ -1,12 +1,11 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CircleCheck, Ticket, Download } from 'lucide-react';
+import { CircleCheck, Ticket } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
 export function BookingSuccessPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
-  const ticketCode: string = location.state?.ticketCode || 'TKT-A1B2C3D4';
+  const ticketCode: string = location.state?.ticketCode || '';
 
   return (
     <div className="flex flex-col bg-bg" style={{ height: 'calc(100dvh - env(safe-area-inset-top, 0px) - 150px)' }}>
@@ -25,9 +24,15 @@ export function BookingSuccessPage() {
         <button onClick={() => navigate('/bookings')} className="w-full bg-accent text-white text-[14px] font-semibold flex items-center justify-center gap-2 active:opacity-80 transition-opacity" style={{ height: 48, borderRadius: 8 }}>
           <Ticket size={16} /> {t('bookings.viewBookings')}
         </button>
-        <button className="w-full border border-border text-text-primary text-[14px] font-semibold flex items-center justify-center gap-2 active:opacity-80 transition-opacity" style={{ height: 48, borderRadius: 8 }}>
+        {/* TODO: enable when download API is ready
+        <button
+          onClick={() => bookingId && downloadTicket(bookingId).catch(() => {})}
+          className="w-full border border-border text-text-primary text-[14px] font-semibold flex items-center justify-center gap-2 active:opacity-80 transition-opacity"
+          style={{ height: 48, borderRadius: 8 }}
+        >
           <Download size={16} /> {t('success.downloadTicket')}
         </button>
+        */}
       </div>
     </div>
   );

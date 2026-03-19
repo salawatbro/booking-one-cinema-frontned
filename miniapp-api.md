@@ -187,7 +187,7 @@ interface Profile {
   last_name: string | null;
   username: string | null;
   phone: string | null;
-  language: 'uz' | 'ru' | 'kk';
+  language: 'uz' | 'ru' | 'kaa';
   bookings_count?: number;
 }
 
@@ -201,6 +201,31 @@ interface BookingStats {
 interface CalendarDay {
   date: string;   // "2026-03-20"
   count: number;  // number of showtimes on that day
+}
+
+interface PaymentInitiation {
+  payment_url: string;
+  provider: 'click' | 'payme';
+  amount: number;              // in UZS
+  expires_at: string;          // ISO 8601
+}
+
+interface PaymentStatus {
+  status: 'waiting' | 'paid' | 'failed' | 'expired';
+  paid_at: string | null;     // ISO 8601
+  provider: 'click' | 'payme';
+  ticket_code: string | null;
+}
+
+interface AppSettings {
+  cinema_name: string;
+  phone: string | null;
+  telegram: string | null;
+  instagram: string | null;
+  payment_methods: string[];
+  booking_timeout_minutes: number;
+  max_seats_per_booking: number;
+  languages: string[];
 }
 ```
 
@@ -770,6 +795,88 @@ Authorization: tma <initData>
 
 ---
 
+#### POST /bookings/{id}/pay
+
+Initiate payment for a pending booking. Returns payment URL for the selected provider.
+
+**Request body:**
+
+| Field | Type | Required | Validation |
+|-------|------|----------|------------|
+| `provider` | string | yes | `click` or `payme` |
+| `return_url` | string | no | URL to redirect after payment |
+
+**Request:**
+
+```
+POST /api/miniapp/bookings/43/pay
+Authorization: tma <initData>
+Content-Type: application/json
+
+{
+  "provider": "click",
+  "return_url": "https://miniapp.com/booking-success"
+}
+```
+
+**Response: `200 OK`**
+
+```json
+{
+  "data": {
+    "payment_url": "https://my.click.uz/services/pay?service_id=XXX&merchant_id=XXX&amount=150000&transaction_param=43",
+    "provider": "click",
+    "amount": 150000,
+    "expires_at": "2026-03-18T12:15:00+05:00"
+  }
+}
+```
+
+**Error responses:**
+
+| Status | Message | When |
+|--------|---------|------|
+| `403` | `Forbidden.` | Booking belongs to another user |
+| `422` | `Only pending bookings can be paid.` | Booking is not pending |
+| `422` | `Payment already initiated.` | Payment URL already generated |
+
+---
+
+#### GET /bookings/{id}/payment-status
+
+Check payment status. Use for polling after redirecting back from payment provider.
+
+**Request:**
+
+```
+GET /api/miniapp/bookings/43/payment-status
+Authorization: tma <initData>
+```
+
+**Response: `200 OK`**
+
+```json
+{
+  "data": {
+    "status": "paid",
+    "paid_at": "2026-03-18T12:05:00+05:00",
+    "provider": "click",
+    "ticket_code": "TKT-A1B2C3D4"
+  }
+}
+```
+
+**Possible statuses:** `waiting`, `paid`, `failed`, `expired`
+
+**Error responses:**
+
+| Status | Message | When |
+|--------|---------|------|
+| `403` | `Forbidden.` | Booking belongs to another user |
+| `404` | `No payment found for this booking.` | No payment initiated yet |
+
+---
+
 #### GET /bookings/stats
 
 Booking statistics for the authenticated user.
@@ -955,7 +1062,7 @@ Change the user's language. This affects all localized API responses.
 
 | Field | Type | Required | Validation |
 |-------|------|----------|------------|
-| `language` | string | yes | `uz`, `ru`, or `kk` |
+| `language` | string | yes | `uz`, `ru`, or `kaa` |
 
 **Request:**
 
@@ -981,6 +1088,38 @@ Content-Type: application/json
     "username": "alivaliyev",
     "phone": "+998901234567",
     "language": "ru"
+  }
+}
+```
+
+---
+
+### Settings
+
+#### GET /settings
+
+App-level configuration. Contact info, payment methods, cinema details.
+
+**Request:**
+
+```
+GET /api/miniapp/settings
+Authorization: tma <initData>
+```
+
+**Response: `200 OK`**
+
+```json
+{
+  "data": {
+    "cinema_name": "One Cinema",
+    "phone": "+998 90 123 45 67",
+    "telegram": "https://t.me/onecinema_uz",
+    "instagram": "https://instagram.com/onecinema_uz",
+    "payment_methods": ["click", "payme"],
+    "booking_timeout_minutes": 15,
+    "max_seats_per_booking": 10,
+    "languages": ["uz", "ru", "kaa"]
   }
 }
 ```
@@ -1018,7 +1157,9 @@ GET    /api/miniapp/bookings                   User's bookings
 POST   /api/miniapp/bookings                   Create booking
 GET    /api/miniapp/bookings/{id}              Booking detail
 POST   /api/miniapp/bookings/{id}/cancel       Cancel booking
-GET    /api/miniapp/bookings/{id}/ticket        Get ticket info
+POST   /api/miniapp/bookings/{id}/pay          Initiate payment
+GET    /api/miniapp/bookings/{id}/payment-status  Check payment status
+GET    /api/miniapp/bookings/{id}/ticket       Get ticket info
 
 GET    /api/miniapp/movie-requests             User's movie requests
 POST   /api/miniapp/movie-requests             Create movie request
@@ -1026,6 +1167,8 @@ GET    /api/miniapp/movie-requests/{id}        Movie request detail
 
 GET    /api/miniapp/profile                    User profile
 PATCH  /api/miniapp/profile/language           Update language
+
+GET    /api/miniapp/settings                   App configuration & contacts
 ```
 
 ---
@@ -1039,6 +1182,7 @@ parallel:
   GET /movies/featured    -> hero carousel
   GET /movies             -> movies grid
   GET /bookings/stats     -> stats badge on "My Bookings" tab
+  GET /settings           -> contact info, config
 ```
 
 ### 2. Movie detail -> select showtime
@@ -1085,4 +1229,16 @@ GET  /movie-requests  -> list with status updates from admin
 ```
 GET /showtimes/calendar?movie_id=1   -> dates with showtimes
 GET /showtimes?movie_id=1&date=2026-03-20  -> showtimes for that date
+```
+
+### 9. Payment flow
+
+```
+POST /bookings  { showtime_id, seat_ids }         -> booking (pending)
+POST /bookings/{id}/pay  { provider: "click" }    -> { payment_url }
+  -> redirect user to payment_url
+  -> user pays
+  -> redirect back to return_url
+GET /bookings/{id}/payment-status                  -> poll until "paid"
+  -> show success page with ticket_code
 ```

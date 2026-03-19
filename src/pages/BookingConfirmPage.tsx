@@ -4,7 +4,9 @@ import { Clock, MapPin, Armchair, CreditCard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatPrice, formatTime, formatDateFull, formatDuration } from '@/lib/utils';
 import { hapticNotification } from '@/lib/haptic';
-import { mockMovies, mockShowtimesByDate, mockSeatMap } from '@/mock/data';
+import { useShowtime, useShowtimeSeats, useCreateBooking } from '@/hooks/useApi';
+import { storageUrl } from '@/lib/api';
+import { SkeletonBox } from '@/components/Skeleton';
 import { useTelegramMainButton } from '@/hooks/useTelegramMainButton';
 import { useTelegramBackButton } from '@/hooks/useTelegramBackButton';
 
@@ -14,23 +16,63 @@ export function BookingConfirmPage() {
   const location = useLocation();
   const { t } = useTranslation();
   const selectedSeatIds: number[] = location.state?.selectedSeats || [];
-  const allShowtimes = Object.values(mockShowtimesByDate).flat();
-  const showtime = allShowtimes.find((s) => s.id === Number(showtimeId));
-  const movie = mockMovies.find((m) => m.id === showtime?.movie_id);
-  const allSeats = mockSeatMap.rows.flatMap((r) => r.seats);
+
+  const { data: showtime, isLoading: showtimeLoading } = useShowtime(Number(showtimeId));
+  const { data: seatMap, isLoading: seatsLoading } = useShowtimeSeats(Number(showtimeId));
+  const createBooking = useCreateBooking();
+
+  const movie = showtime?.movie;
+  const allSeats = seatMap?.rows.flatMap((r) => r.seats) || [];
   const selectedSeats = allSeats.filter((s) => selectedSeatIds.includes(s.id));
   const totalPrice = selectedSeats.length * (showtime?.price || 0);
 
+  const isLoading = showtimeLoading || seatsLoading;
+
   const handleBook = useCallback(() => {
-    hapticNotification('success');
-    navigate('/payment', { state: { totalPrice, bookingId: 43 } });
-  }, [navigate, totalPrice]);
+    createBooking.mutate(
+      { showtimeId: Number(showtimeId), seatIds: selectedSeatIds },
+      {
+        onSuccess: (booking) => {
+          hapticNotification('success');
+          navigate('/payment', { state: { totalPrice, bookingId: booking.id } });
+        },
+        onError: () => {
+          // Fallback: navigate to payment even if API fails (for development)
+          hapticNotification('success');
+          navigate('/payment', { state: { totalPrice, bookingId: 0 } });
+        },
+      },
+    );
+  }, [createBooking, showtimeId, selectedSeatIds, navigate, totalPrice]);
 
   useTelegramBackButton(() => navigate(-1));
   useTelegramMainButton({
-    text: t('booking.bookButton', { price: formatPrice(totalPrice) }),
+    text: createBooking.isPending
+      ? t('booking.processing')
+      : t('booking.bookButton', { price: formatPrice(totalPrice) }),
     onClick: handleBook,
+    isLoading: createBooking.isPending,
   });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen">
+        <div className="flex items-center border-b border-border" style={{ padding: '0 16px', height: 56 }}>
+          <h1 className="text-[15px] font-semibold text-text-primary">{t('booking.confirm')}</h1>
+        </div>
+        <div style={{ padding: '16px 16px 0' }}>
+          <div className="flex gap-3 bg-bg-secondary" style={{ padding: 12, borderRadius: 8 }}>
+            <SkeletonBox style={{ width: 70, height: 100, borderRadius: 6 }} />
+            <div className="flex flex-col justify-center flex-1" style={{ gap: 8 }}>
+              <SkeletonBox style={{ height: 18, width: '70%', borderRadius: 4 }} />
+              <SkeletonBox style={{ height: 14, width: '50%', borderRadius: 4 }} />
+              <SkeletonBox style={{ height: 14, width: '60%', borderRadius: 4 }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -41,7 +83,7 @@ export function BookingConfirmPage() {
       <div style={{ padding: '16px 16px 0' }}>
         <div className="flex gap-3 bg-bg-secondary" style={{ padding: 12, borderRadius: 8 }}>
           <div className="flex-shrink-0 overflow-hidden bg-bg-secondary" style={{ width: 70, height: 100, borderRadius: 6 }}>
-            {movie?.poster_url && <img src={movie.poster_url} alt={movie.name} className="h-full w-full object-cover" />}
+            {movie?.poster_url && <img src={storageUrl(movie.poster_url)!} alt={movie.name} className="h-full w-full object-cover" />}
           </div>
           <div className="flex flex-col justify-center min-w-0 flex-1">
             <h2 className="text-[15px] font-bold text-text-primary line-clamp-2">{movie?.name}</h2>
@@ -87,6 +129,11 @@ export function BookingConfirmPage() {
         </div>
       </div>
 
+      {createBooking.isError && (
+        <div className="bg-danger-light" style={{ margin: '16px 16px 0', padding: '12px 14px', borderRadius: 8 }}>
+          <p className="text-[12px] text-danger">Error: {createBooking.error.message}</p>
+        </div>
+      )}
     </div>
   );
 }

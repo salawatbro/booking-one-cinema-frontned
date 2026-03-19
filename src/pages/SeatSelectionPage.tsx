@@ -4,7 +4,8 @@ import { Clock, MapPin, Armchair } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SeatGrid } from '@/components/SeatGrid';
 import { formatPrice, formatTime, formatDuration } from '@/lib/utils';
-import { mockSeatMap, mockMovies, mockShowtimesByDate } from '@/mock/data';
+import { useShowtime, useShowtimeSeats } from '@/hooks/useApi';
+import { SkeletonBox } from '@/components/Skeleton';
 import { useTelegramMainButton } from '@/hooks/useTelegramMainButton';
 import { useTelegramBackButton } from '@/hooks/useTelegramBackButton';
 
@@ -13,11 +14,13 @@ export function SeatSelectionPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
-  const allShowtimes = Object.values(mockShowtimesByDate).flat();
-  const showtime = allShowtimes.find((s) => s.id === Number(showtimeId));
-  const movie = mockMovies.find((m) => m.id === showtime?.movie_id);
+
+  const { data: showtime, isLoading: showtimeLoading, error: showtimeError } = useShowtime(Number(showtimeId));
+  const { data: seatMap, isLoading: seatsLoading, error: seatsError } = useShowtimeSeats(Number(showtimeId));
+
+  const movie = showtime?.movie;
   const totalPrice = selectedSeats.length * (showtime?.price || 0);
-  const allSeats = mockSeatMap.rows.flatMap((r) => r.seats);
+  const allSeats = seatMap?.rows.flatMap((r) => r.seats) || [];
   const selected = allSeats.filter((s) => selectedSeats.includes(s.id));
 
   const toggleSeat = (seatId: number) => {
@@ -35,26 +38,58 @@ export function SeatSelectionPage() {
     visible: selectedSeats.length > 0,
   });
 
+  const isLoading = showtimeLoading || seatsLoading;
+  const error = showtimeError || seatsError;
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center" style={{ paddingTop: 60 }}>
+        <p className="text-[13px] text-text-tertiary">Error: {error.message}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex items-center gap-3 border-b border-border" style={{ padding: '0 16px', height: 56 }}>
         <div className="min-w-0 flex-1">
-          <h1 className="text-[15px] font-semibold text-text-primary truncate">{movie?.name}</h1>
-          <div className="flex items-center gap-2 text-[11px] text-text-tertiary">
-            {showtime && (
-              <>
-                <span className="flex items-center gap-1"><Clock size={10} /> {formatTime(showtime.start_time)}</span>
-                <span className="flex items-center gap-1"><MapPin size={10} /> {showtime.hall?.name}</span>
-                {movie && <span>{formatDuration(movie.duration)}</span>}
-              </>
-            )}
-          </div>
+          {isLoading ? (
+            <>
+              <SkeletonBox style={{ height: 16, width: '60%', borderRadius: 4 }} />
+              <SkeletonBox style={{ height: 12, width: '40%', borderRadius: 4, marginTop: 4 }} />
+            </>
+          ) : (
+            <>
+              <h1 className="text-[15px] font-semibold text-text-primary truncate">{movie?.name}</h1>
+              <div className="flex items-center gap-2 text-[11px] text-text-tertiary">
+                {showtime && (
+                  <>
+                    <span className="flex items-center gap-1"><Clock size={10} /> {formatTime(showtime.start_time)}</span>
+                    <span className="flex items-center gap-1"><MapPin size={10} /> {showtime.hall?.name}</span>
+                    {movie && <span>{formatDuration(movie.duration)}</span>}
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </div>
-        {showtime && <span className="text-[13px] font-semibold text-accent">{formatPrice(showtime.price)}{t('seats.perSeat')}</span>}
+        {isLoading ? (
+          <SkeletonBox style={{ height: 16, width: 80, borderRadius: 4 }} />
+        ) : showtime ? (
+          <span className="text-[13px] font-semibold text-accent">{formatPrice(showtime.price)}{t('seats.perSeat')}</span>
+        ) : null}
       </div>
 
       <div className="flex-1 overflow-auto" style={{ padding: '24px 8px' }}>
-        <SeatGrid seatMap={mockSeatMap} selectedSeats={selectedSeats} onToggleSeat={toggleSeat} />
+        {seatsLoading ? (
+          <div className="flex flex-col items-center gap-3" style={{ padding: '40px 16px' }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonBox key={i} style={{ height: 32, width: '80%', borderRadius: 4 }} />
+            ))}
+          </div>
+        ) : seatMap ? (
+          <SeatGrid seatMap={seatMap} selectedSeats={selectedSeats} onToggleSeat={toggleSeat} />
+        ) : null}
       </div>
 
       {selectedSeats.length > 0 && (

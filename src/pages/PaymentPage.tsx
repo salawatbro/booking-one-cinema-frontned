@@ -4,6 +4,7 @@ import { Clock, AlertTriangle, CreditCard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatPrice } from '@/lib/utils';
 import { hapticImpact } from '@/lib/haptic';
+import { useInitiatePayment, usePaymentStatus } from '@/hooks/useApi';
 
 const PAYMENT_TIMEOUT = 15 * 60;
 
@@ -15,6 +16,16 @@ export function PaymentPage() {
   const bookingId: number = location.state?.bookingId || 0;
   const [timeLeft, setTimeLeft] = useState(PAYMENT_TIMEOUT);
   const [expired, setExpired] = useState(false);
+  const [paymentInitiated, setPaymentInitiated] = useState(false);
+
+  const initiatePayment = useInitiatePayment();
+  const { data: paymentStatus } = usePaymentStatus(bookingId, paymentInitiated);
+
+  useEffect(() => {
+    if (paymentStatus?.status === 'paid') {
+      navigate('/booking-success', { state: { bookingId, ticketCode: paymentStatus.ticket_code } });
+    }
+  }, [paymentStatus, navigate, bookingId]);
 
   useEffect(() => {
     if (timeLeft <= 0) { setExpired(true); return; }
@@ -31,6 +42,21 @@ export function PaymentPage() {
   const seconds = timeLeft % 60;
   const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   const isUrgent = timeLeft < 120;
+
+  const handlePayment = (provider: 'click' | 'payme') => {
+    hapticImpact('medium');
+    initiatePayment.mutate(
+      { bookingId, provider, returnUrl: window.location.origin + '/booking-success' },
+      {
+        onSuccess: (data) => {
+          setPaymentInitiated(true);
+          if (data.payment_url) {
+            window.open(data.payment_url, '_blank');
+          }
+        },
+      },
+    );
+  };
 
   if (expired) {
     return (
@@ -73,10 +99,16 @@ export function PaymentPage() {
         <p className="text-[12px] font-semibold text-text-secondary" style={{ marginBottom: 12 }}>{t('payment.selectMethod')}</p>
         <div className="flex flex-col" style={{ gap: 8 }}>
           {[
-            { name: 'Click', color: '#00b4ff', desc: t('payment.clickPay') },
-            { name: 'Payme', color: '#2ebf6a', desc: t('payment.paymePay') },
+            { name: 'Click', provider: 'click' as const, color: '#00b4ff', desc: t('payment.clickPay') },
+            { name: 'Payme', provider: 'payme' as const, color: '#2ebf6a', desc: t('payment.paymePay') },
           ].map((method) => (
-            <button key={method.name} onClick={() => { hapticImpact('medium'); navigate('/booking-success', { state: { bookingId } }); }} className="flex items-center border border-border bg-bg-card active:opacity-70 transition-opacity" style={{ padding: '14px 16px', borderRadius: 8, gap: 12 }}>
+            <button
+              key={method.name}
+              onClick={() => handlePayment(method.provider)}
+              disabled={initiatePayment.isPending}
+              className="flex items-center border border-border bg-bg-card active:opacity-70 transition-opacity disabled:opacity-50"
+              style={{ padding: '14px 16px', borderRadius: 8, gap: 12 }}
+            >
               <div className="flex items-center justify-center text-white font-bold text-[12px]" style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: method.color }}>{method.name}</div>
               <div className="flex-1 text-left">
                 <span className="text-[14px] font-semibold text-text-primary">{method.name}</span>
@@ -87,6 +119,12 @@ export function PaymentPage() {
           ))}
         </div>
       </div>
+
+      {initiatePayment.isError && (
+        <div className="bg-danger-light" style={{ margin: '16px 16px 0', padding: '12px 14px', borderRadius: 8 }}>
+          <p className="text-[12px] text-danger">Error: {initiatePayment.error.message}</p>
+        </div>
+      )}
 
       <div className="flex items-start gap-2 bg-warning-light" style={{ margin: '20px 16px 0', padding: '12px 14px', borderRadius: 8 }}>
         <AlertTriangle size={16} className="text-warning flex-shrink-0" style={{ marginTop: 1 }} />

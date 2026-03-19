@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Clock, MapPin, ChevronRight, Ticket } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatDuration, formatPrice, formatTime } from '@/lib/utils';
-import { mockMovies, mockShowtimesByDate } from '@/mock/data';
+import { useMovie } from '@/hooks/useApi';
+import { storageUrl } from '@/lib/api';
+import { SkeletonBox } from '@/components/Skeleton';
 import { DatePicker } from '@/components/DatePicker';
 import { useTelegramBackButton } from '@/hooks/useTelegramBackButton';
 
@@ -11,23 +13,55 @@ export function MovieDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const movie = mockMovies.find((m) => m.id === Number(id));
+  const { data, isLoading, error } = useMovie(Number(id));
+  const [selectedDate, setSelectedDate] = useState('');
 
-  const movieDates = Object.keys(mockShowtimesByDate).filter((date) =>
-    mockShowtimesByDate[date].some((s) => s.movie_id === Number(id))
-  );
-  const [selectedDate, setSelectedDate] = useState(movieDates[0] || '');
+  const movie = data?.movie;
+  const showtimesByDate = data?.showtimesByDate || {};
+  const movieDates = Object.keys(showtimesByDate);
+
+  useEffect(() => {
+    if (movieDates.length > 0 && !selectedDate) {
+      setSelectedDate(movieDates[0]);
+    }
+  }, [movieDates, selectedDate]);
 
   useTelegramBackButton(() => navigate(-1));
 
+  if (isLoading) {
+    return (
+      <div style={{ paddingBottom: 80 }}>
+        <div className="relative aspect-[3/4] max-h-[50vh] w-full">
+          <SkeletonBox className="h-full w-full" />
+        </div>
+        <div className="-mt-16 relative" style={{ padding: '0 16px' }}>
+          <SkeletonBox style={{ height: 24, width: '70%', borderRadius: 4 }} />
+          <div className="flex items-center gap-2" style={{ marginTop: 10 }}>
+            <SkeletonBox style={{ height: 24, width: 80, borderRadius: 4 }} />
+            <SkeletonBox style={{ height: 24, width: 120, borderRadius: 4 }} />
+          </div>
+          <SkeletonBox style={{ height: 60, width: '100%', borderRadius: 4, marginTop: 14 }} />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center" style={{ paddingTop: 60 }}>
+        <p className="text-[13px] text-text-tertiary">Error: {error.message}</p>
+      </div>
+    );
+  }
+
   if (!movie) return <div className="flex h-screen items-center justify-center text-text-secondary">{t('movie.notFound')}</div>;
 
-  const showtimes = (mockShowtimesByDate[selectedDate] || []).filter((s) => s.movie_id === movie.id);
+  const showtimes = showtimesByDate[selectedDate] || [];
 
   return (
     <div style={{ paddingBottom: 80 }}>
       <div className="relative aspect-[3/4] max-h-[50vh] w-full bg-bg-secondary">
-        {movie.poster_url && <img src={movie.poster_url} alt={movie.name} className="h-full w-full object-cover" />}
+        {movie.poster_url && <img src={storageUrl(movie.poster_url)!} alt={movie.name} className="h-full w-full object-cover" />}
         <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-black/20" />
       </div>
 

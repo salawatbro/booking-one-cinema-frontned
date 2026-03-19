@@ -3,6 +3,7 @@ import { ChevronRight, Clock, MapPin, Armchair } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn, formatPrice, formatTime, formatDate } from '@/lib/utils';
 import type { Booking } from '@/types/api';
+import { storageUrl } from '@/lib/api';
 
 const statusConfig: Record<Booking['status'], { bg: string; text: string; dot: string }> = {
   confirmed: { bg: 'bg-success-light', text: 'text-success', dot: 'bg-success' },
@@ -37,7 +38,7 @@ export function BookingCard({ booking }: { booking: Booking }) {
       <div className="flex gap-3">
         <div className="flex-shrink-0 overflow-hidden bg-bg-card" style={{ width: 52, height: 76, borderRadius: 4 }}>
           {booking.showtime.movie?.poster_url ? (
-            <img src={booking.showtime.movie.poster_url} alt={booking.showtime.movie.name} className="h-full w-full object-cover" />
+            <img src={storageUrl(booking.showtime.movie.poster_url)!} alt={booking.showtime.movie.name} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-text-tertiary text-[9px]">?</div>
           )}
