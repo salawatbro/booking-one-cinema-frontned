@@ -50,7 +50,7 @@ export function BookingConfirmPage() {
 
   const isDesktop = useIsDesktop();
   const { isAvailable: hasBackButton } = useTelegramBackButton(() => navigate(-1));
-  const { isAvailable: hasMainButton } = useTelegramMainButton({
+  useTelegramMainButton({
     text: createBooking.isPending
       ? t('booking.processing')
       : t('booking.bookButton', { price: formatPrice(totalPrice) }),
@@ -140,13 +140,13 @@ export function BookingConfirmPage() {
         </div>
       )}
 
-      {!hasMainButton && (
+      {(
         <div
           className={cn(
             'bg-bg-card border-t border-border',
-            !isDesktop && 'fixed bottom-14 left-0 right-0',
+            isDesktop ? '' : 'fixed left-0 right-0',
           )}
-          style={{ padding: '12px 16px 20px' }}
+          style={{ padding: '12px 16px 20px', bottom: isDesktop ? undefined : 60 }}
         >
           <button
             onClick={handleBook}

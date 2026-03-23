@@ -35,7 +35,7 @@ export function SeatSelectionPage() {
 
   const isDesktop = useIsDesktop();
   const { isAvailable: hasBackButton } = useTelegramBackButton(() => navigate(-1));
-  const { isAvailable: hasMainButton } = useTelegramMainButton({
+  useTelegramMainButton({
     text: `${t('seats.continue')} — ${formatPrice(totalPrice)}`,
     onClick: handleContinue,
     visible: selectedSeats.length > 0,
@@ -100,9 +100,9 @@ export function SeatSelectionPage() {
         <div
           className={cn(
             'bg-bg-card border-t border-border',
-            !isDesktop && 'fixed bottom-14 left-0 right-0',
+            isDesktop ? '' : 'fixed left-0 right-0',
           )}
-          style={{ padding: '12px 16px 20px' }}
+          style={{ padding: '12px 16px 20px', bottom: isDesktop ? undefined : 60 }}
         >
           <div className="flex items-center gap-1.5 flex-wrap" style={{ marginBottom: 10 }}>
             <Armchair size={14} className="text-text-tertiary" />
@@ -117,15 +117,13 @@ export function SeatSelectionPage() {
               <p className="text-[11px] text-text-tertiary">{t('seats.seatsSelected', { count: selectedSeats.length })}</p>
               <p className="text-[20px] font-bold text-text-primary">{formatPrice(totalPrice)}</p>
             </div>
-            {!hasMainButton && (
-              <button
-                onClick={handleContinue}
-                className="bg-accent text-white font-semibold text-[14px]"
-                style={{ padding: '10px 24px', borderRadius: 8 }}
-              >
-                {t('seats.continue')}
-              </button>
-            )}
+            <button
+              onClick={handleContinue}
+              className="bg-accent text-white font-semibold text-[14px]"
+              style={{ padding: '10px 24px', borderRadius: 8 }}
+            >
+              {t('seats.continue')}
+            </button>
           </div>
         </div>
       )}
