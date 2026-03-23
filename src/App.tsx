@@ -23,6 +23,12 @@ import { MovieRequestsPage } from '@/pages/MovieRequestsPage';
 import { MovieRequestFormPage } from '@/pages/MovieRequestFormPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { RequireAuth } from '@/components/RequireAuth';
+import { useSyncLanguage } from '@/hooks/useSyncLanguage';
+
+function LanguageSync() {
+  useSyncLanguage();
+  return null;
+}
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -51,6 +57,7 @@ function App() {
       <ToastProvider>
         {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
         <ErrorBoundary>
+          <LanguageSync />
           <BrowserRouter>
             <div className="min-h-screen bg-bg">
               <Header />
