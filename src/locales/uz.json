@@ -15,7 +15,8 @@
     "login": "Kirish",
     "loginTitle": "Tizimga kirish",
     "loginDescription": "Bron qilish uchun Telegram orqali tizimga kiring",
-    "loggingIn": "Kirilmoqda..."
+    "loggingIn": "Kirilmoqda...",
+    "loginWithTelegram": "Telegram orqali kirish"
   },
   "home": {
     "search": "Kino qidirish...",

@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useCallback, useState, useEffect } from 'react';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth, type TelegramLoginData } from '@/hooks/useAuth';
@@ -10,8 +10,9 @@ const BOT_NAME = import.meta.env.VITE_TELEGRAM_BOT_NAME;
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { t } = useTranslation();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -29,6 +30,27 @@ export function LoginPage() {
       setLoading(false);
     }
   }, [login, navigate, from]);
+
+  // Handle redirect callback (query params)
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+      return;
+    }
+    const id = searchParams.get('id');
+    const hash = searchParams.get('hash');
+    if (id && hash) {
+      handleAuth({
+        id: Number(id),
+        first_name: searchParams.get('first_name') || '',
+        last_name: searchParams.get('last_name') || undefined,
+        username: searchParams.get('username') || undefined,
+        photo_url: searchParams.get('photo_url') || undefined,
+        auth_date: Number(searchParams.get('auth_date') || 0),
+        hash,
+      });
+    }
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center" style={{ minHeight: 'calc(100vh - 180px)', padding: '0 24px' }}>

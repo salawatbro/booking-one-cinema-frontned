@@ -15,7 +15,8 @@
     "login": "Кіру",
     "loginTitle": "Жүйеге кіру",
     "loginDescription": "Билет брондау үшін Telegram арқылы кіріңіз",
-    "loggingIn": "Кіру..."
+    "loggingIn": "Кіру...",
+    "loginWithTelegram": "Telegram арқылы кіру"
   },
   "home": {
     "search": "Кино іздеу...",

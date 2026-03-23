@@ -15,7 +15,8 @@
     "login": "Войти",
     "loginTitle": "Вход в систему",
     "loginDescription": "Войдите через Telegram, чтобы бронировать билеты",
-    "loggingIn": "Вход..."
+    "loggingIn": "Вход...",
+    "loginWithTelegram": "Войти через Telegram"
   },
   "home": {
     "search": "Поиск фильмов...",
