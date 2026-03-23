@@ -11,7 +11,6 @@ import { useTelegramMainButton } from '@/hooks/useTelegramMainButton';
 import { useTelegramBackButton } from '@/hooks/useTelegramBackButton';
 import { WebBackButton } from '@/components/WebBackButton';
 import { useIsDesktop } from '@/hooks/useIsDesktop';
-import { cn } from '@/lib/utils';
 
 export function BookingConfirmPage() {
   const { showtimeId } = useParams();
@@ -40,7 +39,6 @@ export function BookingConfirmPage() {
           navigate('/payment', { state: { totalPrice, bookingId: booking.id } });
         },
         onError: () => {
-          // Fallback: navigate to payment even if API fails (for development)
           hapticNotification('success');
           navigate('/payment', { state: { totalPrice, bookingId: 0 } });
         },
@@ -60,7 +58,7 @@ export function BookingConfirmPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen">
+      <div style={{ maxWidth: isDesktop ? 800 : undefined, marginLeft: isDesktop ? 'auto' : undefined, marginRight: isDesktop ? 'auto' : undefined }}>
         <div className="flex items-center border-b border-border" style={{ padding: '0 16px', height: 56 }}>
           <h1 className="text-[15px] font-semibold text-text-primary">{t('booking.confirm')}</h1>
         </div>
@@ -78,88 +76,128 @@ export function BookingConfirmPage() {
     );
   }
 
+  // Movie info card
+  const movieCard = (
+    <div className="flex gap-3 bg-bg-secondary" style={{ padding: 12, borderRadius: 8 }}>
+      <div className="flex-shrink-0 overflow-hidden bg-bg-secondary" style={{ width: isDesktop ? 100 : 70, height: isDesktop ? 150 : 100, borderRadius: 6 }}>
+        {movie?.poster_url && <img src={storageUrl(movie.poster_url)!} alt={movie.name} className="h-full w-full object-cover" />}
+      </div>
+      <div className="flex flex-col justify-center min-w-0 flex-1">
+        <h2 className={isDesktop ? 'text-[18px] font-bold text-text-primary line-clamp-2' : 'text-[15px] font-bold text-text-primary line-clamp-2'}>{movie?.name}</h2>
+        <div className="flex flex-col text-[12px] text-text-secondary" style={{ marginTop: 8, gap: 4 }}>
+          <span className="flex items-center gap-1.5"><Clock size={12} /> {showtime && `${formatDateFull(showtime.start_date)}, ${formatTime(showtime.start_time)}`}</span>
+          <span className="flex items-center gap-1.5"><MapPin size={12} /> {showtime?.hall?.name}{movie && ` · ${formatDuration(movie.duration)}`}</span>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Seats section
+  const seatsSection = (
+    <div>
+      <div className="flex items-center gap-1.5 text-[12px] font-semibold text-text-secondary" style={{ marginBottom: 8 }}>
+        <Armchair size={14} /> <span>{t('booking.selectedSeats')}</span>
+      </div>
+      <div className="flex flex-wrap" style={{ gap: 6 }}>
+        {selectedSeats.map((s) => (
+          <span key={s.id} className="text-[12px] font-semibold text-accent bg-accent-light" style={{ padding: '6px 12px', borderRadius: 6 }}>
+            {t('booking.row', { row: s.row, number: s.number })}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+
+  // Payment summary
+  const paymentSummary = (
+    <div>
+      <div className="flex items-center gap-1.5 text-[12px] font-semibold text-text-secondary" style={{ marginBottom: 10 }}>
+        <CreditCard size={14} /> <span>{t('booking.payment')}</span>
+      </div>
+      <div className="flex justify-between text-[13px]" style={{ marginBottom: 6 }}>
+        <span className="text-text-secondary">{t('booking.ticketPrice')}</span>
+        <span className="text-text-primary">{formatPrice(showtime?.price || 0)}</span>
+      </div>
+      <div className="flex justify-between text-[13px]" style={{ marginBottom: 6 }}>
+        <span className="text-text-secondary">{t('booking.seatsCount')}</span>
+        <span className="text-text-primary">x {selectedSeats.length}</span>
+      </div>
+      <div className="border-t border-border" style={{ margin: '8px 0' }} />
+      <div className="flex justify-between items-center">
+        <span className="text-[14px] font-semibold text-text-primary">{t('booking.total')}</span>
+        <span className="text-[18px] font-bold text-accent">{formatPrice(totalPrice)}</span>
+      </div>
+    </div>
+  );
+
+  // Book button
+  const bookButton = (
+    <button
+      onClick={handleBook}
+      disabled={createBooking.isPending}
+      className="w-full bg-accent text-white font-semibold text-[15px] disabled:opacity-60"
+      style={{ padding: '14px 0', borderRadius: 8 }}
+    >
+      {createBooking.isPending
+        ? t('booking.processing')
+        : t('booking.bookButton', { price: formatPrice(totalPrice) })}
+    </button>
+  );
+
+  const errorBlock = createBooking.isError ? (
+    <div className="bg-danger-light" style={{ padding: '12px 14px', borderRadius: 8 }}>
+      <p className="text-[12px] text-danger">Error: {createBooking.error.message}</p>
+    </div>
+  ) : null;
+
+  // Desktop: two-column layout
+  if (isDesktop) {
+    return (
+      <div style={{ padding: '24px 24px', maxWidth: 900, marginLeft: 'auto', marginRight: 'auto' }}>
+        {!hasBackButton && (
+          <div style={{ marginBottom: 16 }}>
+            <WebBackButton />
+          </div>
+        )}
+        <h1 className="text-[20px] font-bold text-text-primary" style={{ marginBottom: 20 }}>{t('booking.confirm')}</h1>
+        <div className="flex gap-6" style={{ alignItems: 'flex-start' }}>
+          {/* Left: Movie + Seats */}
+          <div className="flex-1 min-w-0 flex flex-col" style={{ gap: 20 }}>
+            {movieCard}
+            {seatsSection}
+          </div>
+          {/* Right: Payment summary + Button */}
+          <div className="flex-shrink-0 flex flex-col border border-border bg-bg-card" style={{ width: 340, borderRadius: 8, padding: 20, gap: 16, position: 'sticky', top: 80 }}>
+            {paymentSummary}
+            {errorBlock}
+            {bookButton}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Mobile layout
   return (
-    <div className="min-h-screen" style={{ maxWidth: isDesktop ? 640 : undefined, marginLeft: isDesktop ? 'auto' : undefined, marginRight: isDesktop ? 'auto' : undefined }}>
+    <div className="min-h-screen">
       <div className="flex items-center gap-3 border-b border-border" style={{ padding: '0 16px', height: 56 }}>
         {!hasBackButton && <WebBackButton />}
         <h1 className="text-[15px] font-semibold text-text-primary">{t('booking.confirm')}</h1>
       </div>
 
-      <div style={{ padding: '16px 16px 0' }}>
-        <div className="flex gap-3 bg-bg-secondary" style={{ padding: 12, borderRadius: 8 }}>
-          <div className="flex-shrink-0 overflow-hidden bg-bg-secondary" style={{ width: 70, height: 100, borderRadius: 6 }}>
-            {movie?.poster_url && <img src={storageUrl(movie.poster_url)!} alt={movie.name} className="h-full w-full object-cover" />}
-          </div>
-          <div className="flex flex-col justify-center min-w-0 flex-1">
-            <h2 className="text-[15px] font-bold text-text-primary line-clamp-2">{movie?.name}</h2>
-            <div className="flex flex-col text-[12px] text-text-secondary" style={{ marginTop: 8, gap: 4 }}>
-              <span className="flex items-center gap-1.5"><Clock size={12} /> {showtime && `${formatDateFull(showtime.start_date)}, ${formatTime(showtime.start_time)}`}</span>
-              <span className="flex items-center gap-1.5"><MapPin size={12} /> {showtime?.hall?.name}{movie && ` · ${formatDuration(movie.duration)}`}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ padding: '14px 16px 0' }}>
-        <div className="flex items-center gap-1.5 text-[12px] font-semibold text-text-secondary" style={{ marginBottom: 8 }}>
-          <Armchair size={14} /> <span>{t('booking.selectedSeats')}</span>
-        </div>
-        <div className="flex flex-wrap" style={{ gap: 6 }}>
-          {selectedSeats.map((s) => (
-            <span key={s.id} className="text-[12px] font-semibold text-accent bg-accent-light" style={{ padding: '6px 12px', borderRadius: 6 }}>
-              {t('booking.row', { row: s.row, number: s.number })}
-            </span>
-          ))}
-        </div>
-      </div>
-
+      <div style={{ padding: '16px 16px 0' }}>{movieCard}</div>
+      <div style={{ padding: '14px 16px 0' }}>{seatsSection}</div>
       <div className="border-t border-border" style={{ margin: '16px 16px 0' }} />
+      <div style={{ padding: '14px 16px 0' }}>{paymentSummary}</div>
 
-      <div style={{ padding: '14px 16px 0' }}>
-        <div className="flex items-center gap-1.5 text-[12px] font-semibold text-text-secondary" style={{ marginBottom: 10 }}>
-          <CreditCard size={14} /> <span>{t('booking.payment')}</span>
-        </div>
-        <div className="flex justify-between text-[13px]" style={{ marginBottom: 6 }}>
-          <span className="text-text-secondary">{t('booking.ticketPrice')}</span>
-          <span className="text-text-primary">{formatPrice(showtime?.price || 0)}</span>
-        </div>
-        <div className="flex justify-between text-[13px]" style={{ marginBottom: 6 }}>
-          <span className="text-text-secondary">{t('booking.seatsCount')}</span>
-          <span className="text-text-primary">x {selectedSeats.length}</span>
-        </div>
-        <div className="border-t border-border" style={{ margin: '8px 0' }} />
-        <div className="flex justify-between items-center">
-          <span className="text-[14px] font-semibold text-text-primary">{t('booking.total')}</span>
-          <span className="text-[18px] font-bold text-accent">{formatPrice(totalPrice)}</span>
-        </div>
+      {errorBlock && <div style={{ padding: '16px 16px 0' }}>{errorBlock}</div>}
+
+      <div
+        className="bg-bg-card border-t border-border fixed left-0 right-0"
+        style={{ padding: '12px 16px 20px', bottom: 60 }}
+      >
+        {bookButton}
       </div>
-
-      {createBooking.isError && (
-        <div className="bg-danger-light" style={{ margin: '16px 16px 0', padding: '12px 14px', borderRadius: 8 }}>
-          <p className="text-[12px] text-danger">Error: {createBooking.error.message}</p>
-        </div>
-      )}
-
-      {(
-        <div
-          className={cn(
-            'bg-bg-card border-t border-border',
-            isDesktop ? '' : 'fixed left-0 right-0',
-          )}
-          style={{ padding: '12px 16px 20px', bottom: isDesktop ? undefined : 60 }}
-        >
-          <button
-            onClick={handleBook}
-            disabled={createBooking.isPending}
-            className="w-full bg-accent text-white font-semibold text-[15px] disabled:opacity-60"
-            style={{ padding: '14px 0', borderRadius: 8 }}
-          >
-            {createBooking.isPending
-              ? t('booking.processing')
-              : t('booking.bookButton', { price: formatPrice(totalPrice) })}
-          </button>
-        </div>
-      )}
     </div>
   );
 }

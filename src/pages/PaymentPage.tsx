@@ -62,13 +62,13 @@ export function PaymentPage() {
 
   if (expired) {
     return (
-      <div className="flex flex-col items-center justify-center text-center" style={{ padding: '0 32px', height: 'calc(100dvh - env(safe-area-inset-top, 0px) - 150px)' }}>
+      <div className="flex flex-col items-center justify-center text-center" style={{ padding: '0 32px', minHeight: 'calc(100vh - 200px)' }}>
         <div className="flex items-center justify-center bg-danger-light" style={{ width: 64, height: 64, borderRadius: 32 }}>
           <AlertTriangle size={28} className="text-danger" />
         </div>
         <h1 className="text-[20px] font-bold text-text-primary" style={{ marginTop: 20 }}>{t('payment.expired')}</h1>
         <p className="text-[13px] text-text-secondary leading-relaxed" style={{ marginTop: 8, maxWidth: 280 }}>{t('payment.expiredMessage')}</p>
-        <div className="w-full flex flex-col" style={{ marginTop: 32, gap: 8 }}>
+        <div className="flex flex-col" style={{ marginTop: 32, gap: 8, width: '100%', maxWidth: 320 }}>
           <button onClick={() => navigate('/')} className="w-full bg-accent text-white text-[14px] font-semibold active:opacity-80 transition-opacity" style={{ height: 48, borderRadius: 8 }}>{t('payment.goHome')}</button>
           <button onClick={() => navigate('/bookings')} className="w-full bg-bg-secondary text-text-primary text-[14px] font-semibold active:opacity-80 transition-opacity" style={{ height: 48, borderRadius: 8 }}>{t('payment.myBookings')}</button>
         </div>
@@ -76,12 +76,9 @@ export function PaymentPage() {
     );
   }
 
-  return (
-    <div style={{ paddingBottom: isDesktop ? 24 : 80, maxWidth: isDesktop ? 640 : undefined, marginLeft: isDesktop ? 'auto' : undefined, marginRight: isDesktop ? 'auto' : undefined }}>
-      <div className="flex items-center justify-center border-b border-border" style={{ height: 56 }}>
-        <h1 className="text-[15px] font-semibold text-text-primary">{t('payment.title')}</h1>
-      </div>
-
+  const content = (
+    <>
+      {/* Timer */}
       <div className="flex flex-col items-center" style={{ padding: '32px 16px 0' }}>
         <div className="flex items-center gap-2">
           <Clock size={18} className={isUrgent ? 'text-danger' : 'text-text-tertiary'} />
@@ -90,6 +87,7 @@ export function PaymentPage() {
         <p className="text-[12px] text-text-tertiary" style={{ marginTop: 6 }}>{t('payment.timeLeft')}</p>
       </div>
 
+      {/* Amount */}
       <div className="flex flex-col items-center" style={{ marginTop: 24 }}>
         <p className="text-[12px] text-text-tertiary">{t('payment.amount')}</p>
         <p className="text-[28px] font-bold text-text-primary" style={{ marginTop: 4 }}>{formatPrice(totalPrice)}</p>
@@ -97,9 +95,10 @@ export function PaymentPage() {
 
       <div className="border-t border-border" style={{ margin: '24px 16px' }} />
 
+      {/* Payment methods */}
       <div style={{ padding: '0 16px' }}>
         <p className="text-[12px] font-semibold text-text-secondary" style={{ marginBottom: 12 }}>{t('payment.selectMethod')}</p>
-        <div className="flex flex-col" style={{ gap: 8 }}>
+        <div className={isDesktop ? 'grid grid-cols-2 gap-3' : 'flex flex-col gap-2'}>
           {[
             { name: 'Click', provider: 'click' as const, color: '#00b4ff', desc: t('payment.clickPay') },
             { name: 'Payme', provider: 'payme' as const, color: '#2ebf6a', desc: t('payment.paymePay') },
@@ -132,6 +131,30 @@ export function PaymentPage() {
         <AlertTriangle size={16} className="text-warning flex-shrink-0" style={{ marginTop: 1 }} />
         <p className="text-[12px] text-text-secondary leading-relaxed">{t('payment.warning')}</p>
       </div>
+    </>
+  );
+
+  // Desktop: centered card
+  if (isDesktop) {
+    return (
+      <div style={{ maxWidth: 560, marginLeft: 'auto', marginRight: 'auto', padding: '24px 0 24px' }}>
+        <div className="flex items-center justify-center" style={{ height: 56 }}>
+          <h1 className="text-[18px] font-bold text-text-primary">{t('payment.title')}</h1>
+        </div>
+        <div className="border border-border bg-bg-card" style={{ borderRadius: 8, paddingBottom: 24 }}>
+          {content}
+        </div>
+      </div>
+    );
+  }
+
+  // Mobile
+  return (
+    <div style={{ paddingBottom: 80 }}>
+      <div className="flex items-center justify-center border-b border-border" style={{ height: 56 }}>
+        <h1 className="text-[15px] font-semibold text-text-primary">{t('payment.title')}</h1>
+      </div>
+      {content}
     </div>
   );
 }
