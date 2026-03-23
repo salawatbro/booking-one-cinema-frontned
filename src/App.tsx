@@ -34,8 +34,8 @@ function App() {
       tg.expand();
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        tg.requestFullscreen();
-        tg.disableVerticalSwipes();
+        try { tg.requestFullscreen(); } catch { /* unsupported in older versions */ }
+        try { tg.disableVerticalSwipes(); } catch { /* unsupported in older versions */ }
       }
     }
   }, []);
