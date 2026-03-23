@@ -11,6 +11,12 @@
     "selectLang": "Выбор языка",
     "profile": "Профиль"
   },
+  "auth": {
+    "login": "Войти",
+    "loginTitle": "Вход в систему",
+    "loginDescription": "Войдите через Telegram, чтобы бронировать билеты",
+    "loggingIn": "Вход..."
+  },
   "home": {
     "search": "Поиск фильмов...",
     "searchLabel": "Поиск фильмов",

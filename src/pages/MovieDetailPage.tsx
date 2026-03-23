@@ -8,11 +8,14 @@ import { storageUrl } from '@/lib/api';
 import { SkeletonBox } from '@/components/Skeleton';
 import { DatePicker } from '@/components/DatePicker';
 import { useTelegramBackButton } from '@/hooks/useTelegramBackButton';
+import { WebBackButton } from '@/components/WebBackButton';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 export function MovieDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
   const { data, isLoading, error } = useMovie(Number(id));
   const [selectedDate, setSelectedDate] = useState('');
 
@@ -26,10 +29,22 @@ export function MovieDetailPage() {
     }
   }, [movieDates, selectedDate]);
 
-  useTelegramBackButton(() => navigate(-1));
+  const { isAvailable: hasBackButton } = useTelegramBackButton(() => navigate(-1));
 
   if (isLoading) {
-    return (
+    return isDesktop ? (
+      <div className="flex gap-6" style={{ padding: '24px 24px 24px' }}>
+        <SkeletonBox className="flex-shrink-0" style={{ width: 300, height: 450, borderRadius: 8 }} />
+        <div className="flex-1">
+          <SkeletonBox style={{ height: 28, width: '60%', borderRadius: 4 }} />
+          <div className="flex items-center gap-2" style={{ marginTop: 12 }}>
+            <SkeletonBox style={{ height: 24, width: 80, borderRadius: 4 }} />
+            <SkeletonBox style={{ height: 24, width: 120, borderRadius: 4 }} />
+          </div>
+          <SkeletonBox style={{ height: 80, width: '100%', borderRadius: 4, marginTop: 16 }} />
+        </div>
+      </div>
+    ) : (
       <div style={{ paddingBottom: 80 }}>
         <div className="relative aspect-[3/4] max-h-[50vh] w-full">
           <SkeletonBox className="h-full w-full" />
@@ -58,30 +73,24 @@ export function MovieDetailPage() {
 
   const showtimes = showtimesByDate[selectedDate] || [];
 
-  return (
-    <div style={{ paddingBottom: 80 }}>
-      <div className="relative aspect-[3/4] max-h-[50vh] w-full bg-bg-secondary">
-        {movie.poster_url && <img src={storageUrl(movie.poster_url)!} alt={movie.name} className="h-full w-full object-cover" />}
-        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-black/20" />
+  const movieInfo = (
+    <>
+      <h1 className="text-[20px] font-bold text-text-primary leading-tight">{movie.name}</h1>
+      <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 10 }}>
+        <span className="flex items-center gap-1 text-[12px] font-medium text-text-secondary bg-bg-secondary" style={{ padding: '4px 10px', borderRadius: 4 }}>
+          <Clock size={12} /> {formatDuration(movie.duration)}
+        </span>
+        <span className="flex items-center gap-1 text-[12px] font-medium text-accent bg-accent-light" style={{ padding: '4px 10px', borderRadius: 4 }}>
+          <Ticket size={12} /> {t('movie.showtimesAvailable', { count: movie.upcoming_showtimes_count })}
+        </span>
       </div>
+      {movie.description && <p className="text-[13px] leading-[1.7] text-text-secondary" style={{ marginTop: 14 }}>{movie.description}</p>}
+    </>
+  );
 
-      <div className="-mt-16 relative" style={{ padding: '0 16px' }}>
-        <h1 className="text-[20px] font-bold text-text-primary leading-tight">{movie.name}</h1>
-        <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 10 }}>
-          <span className="flex items-center gap-1 text-[12px] font-medium text-text-secondary bg-bg-secondary" style={{ padding: '4px 10px', borderRadius: 4 }}>
-            <Clock size={12} /> {formatDuration(movie.duration)}
-          </span>
-          <span className="flex items-center gap-1 text-[12px] font-medium text-accent bg-accent-light" style={{ padding: '4px 10px', borderRadius: 4 }}>
-            <Ticket size={12} /> {t('movie.showtimesAvailable', { count: movie.upcoming_showtimes_count })}
-          </span>
-        </div>
-        {movie.description && <p className="text-[13px] leading-[1.7] text-text-secondary" style={{ marginTop: 14 }}>{movie.description}</p>}
-      </div>
-
-      <div className="border-t border-border" style={{ margin: '16px 16px 0' }} />
-
+  const showtimesList = (
+    <>
       <DatePicker dates={movieDates} selectedDate={selectedDate} onSelect={setSelectedDate} />
-
       <div style={{ padding: '0 16px' }}>
         <h2 className="text-[14px] font-semibold text-text-primary" style={{ marginBottom: 10 }}>{t('movie.showtimes')}</h2>
         <div className="flex flex-col gap-2">
@@ -96,6 +105,54 @@ export function MovieDetailPage() {
           {showtimes.length === 0 && <p className="text-center text-[13px] text-text-tertiary" style={{ padding: '40px 0' }}>{t('movie.noShowtimes')}</p>}
         </div>
       </div>
+    </>
+  );
+
+  if (isDesktop) {
+    return (
+      <div style={{ paddingBottom: 24 }}>
+        {!hasBackButton && (
+          <div style={{ padding: '12px 24px 0' }}>
+            <WebBackButton />
+          </div>
+        )}
+        <div className="flex gap-8" style={{ padding: '16px 24px' }}>
+          {/* Left: Poster */}
+          <div className="flex-shrink-0" style={{ width: 300 }}>
+            <div className="aspect-[2/3] w-full bg-bg-secondary overflow-hidden" style={{ borderRadius: 8 }}>
+              {movie.poster_url && <img src={storageUrl(movie.poster_url)!} alt={movie.name} className="h-full w-full object-cover" />}
+            </div>
+          </div>
+          {/* Right: Details + Showtimes */}
+          <div className="flex-1 min-w-0">
+            {movieInfo}
+            <div className="border-t border-border" style={{ margin: '16px 0' }} />
+            {showtimesList}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ paddingBottom: 80 }}>
+      <div className="relative aspect-[3/4] max-h-[50vh] w-full bg-bg-secondary">
+        {movie.poster_url && <img src={storageUrl(movie.poster_url)!} alt={movie.name} className="h-full w-full object-cover" />}
+        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-black/20" />
+        {!hasBackButton && (
+          <div className="absolute top-3 left-3 z-10">
+            <WebBackButton floating />
+          </div>
+        )}
+      </div>
+
+      <div className="-mt-16 relative" style={{ padding: '0 16px' }}>
+        {movieInfo}
+      </div>
+
+      <div className="border-t border-border" style={{ margin: '16px 16px 0' }} />
+
+      {showtimesList}
     </div>
   );
 }

@@ -1,12 +1,14 @@
 import { useEffect, useRef } from 'react';
 
-export function useTelegramBackButton(onBack: () => void): void {
+export function useTelegramBackButton(onBack: () => void): { isAvailable: boolean } {
   const callbackRef = useRef(onBack);
   callbackRef.current = onBack;
 
   const stableHandler = useRef(() => {
     callbackRef.current();
   });
+
+  const isAvailable = !!window.Telegram?.WebApp?.BackButton;
 
   useEffect(() => {
     const backButton = window.Telegram?.WebApp?.BackButton;
@@ -20,4 +22,6 @@ export function useTelegramBackButton(onBack: () => void): void {
       backButton.hide();
     };
   }, []);
+
+  return { isAvailable };
 }

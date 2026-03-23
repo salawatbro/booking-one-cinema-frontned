@@ -2,9 +2,13 @@ import { NavLink } from 'react-router-dom';
 import { Home, CalendarDays, Ticket, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 export function BottomNav() {
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
+
+  if (isDesktop) return null;
 
   const tabs = [
     { to: '/', icon: Home, label: t('nav.home') },

@@ -9,6 +9,9 @@ import { storageUrl } from '@/lib/api';
 import { SkeletonBox } from '@/components/Skeleton';
 import { useTelegramMainButton } from '@/hooks/useTelegramMainButton';
 import { useTelegramBackButton } from '@/hooks/useTelegramBackButton';
+import { WebBackButton } from '@/components/WebBackButton';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
+import { cn } from '@/lib/utils';
 
 export function BookingConfirmPage() {
   const { showtimeId } = useParams();
@@ -45,8 +48,9 @@ export function BookingConfirmPage() {
     );
   }, [createBooking, showtimeId, selectedSeatIds, navigate, totalPrice]);
 
-  useTelegramBackButton(() => navigate(-1));
-  useTelegramMainButton({
+  const isDesktop = useIsDesktop();
+  const { isAvailable: hasBackButton } = useTelegramBackButton(() => navigate(-1));
+  const { isAvailable: hasMainButton } = useTelegramMainButton({
     text: createBooking.isPending
       ? t('booking.processing')
       : t('booking.bookButton', { price: formatPrice(totalPrice) }),
@@ -75,8 +79,9 @@ export function BookingConfirmPage() {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="flex items-center border-b border-border" style={{ padding: '0 16px', height: 56 }}>
+    <div className="min-h-screen" style={{ maxWidth: isDesktop ? 640 : undefined, marginLeft: isDesktop ? 'auto' : undefined, marginRight: isDesktop ? 'auto' : undefined }}>
+      <div className="flex items-center gap-3 border-b border-border" style={{ padding: '0 16px', height: 56 }}>
+        {!hasBackButton && <WebBackButton />}
         <h1 className="text-[15px] font-semibold text-text-primary">{t('booking.confirm')}</h1>
       </div>
 
@@ -132,6 +137,27 @@ export function BookingConfirmPage() {
       {createBooking.isError && (
         <div className="bg-danger-light" style={{ margin: '16px 16px 0', padding: '12px 14px', borderRadius: 8 }}>
           <p className="text-[12px] text-danger">Error: {createBooking.error.message}</p>
+        </div>
+      )}
+
+      {!hasMainButton && (
+        <div
+          className={cn(
+            'bg-bg-card border-t border-border',
+            !isDesktop && 'fixed bottom-14 left-0 right-0',
+          )}
+          style={{ padding: '12px 16px 20px' }}
+        >
+          <button
+            onClick={handleBook}
+            disabled={createBooking.isPending}
+            className="w-full bg-accent text-white font-semibold text-[15px] disabled:opacity-60"
+            style={{ padding: '14px 0', borderRadius: 8 }}
+          >
+            {createBooking.isPending
+              ? t('booking.processing')
+              : t('booking.bookButton', { price: formatPrice(totalPrice) })}
+          </button>
         </div>
       )}
     </div>

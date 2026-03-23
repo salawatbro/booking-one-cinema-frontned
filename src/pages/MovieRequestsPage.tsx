@@ -6,6 +6,8 @@ import { useMovieRequests } from '@/hooks/useApi';
 import { SkeletonBox } from '@/components/Skeleton';
 import type { MovieRequest } from '@/types/api';
 import { useTelegramBackButton } from '@/hooks/useTelegramBackButton';
+import { WebBackButton } from '@/components/WebBackButton';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 const statusConfig: Record<MovieRequest['status'], { bg: string; text: string; dot: string }> = {
   pending: { bg: 'bg-warning-light', text: 'text-warning', dot: 'bg-warning' },
@@ -16,14 +18,18 @@ const statusConfig: Record<MovieRequest['status'], { bg: string; text: string; d
 export function MovieRequestsPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
   const { data: movieRequests, isLoading, error } = useMovieRequests();
 
-  useTelegramBackButton(() => navigate(-1));
+  const { isAvailable: hasBackButton } = useTelegramBackButton(() => navigate(-1));
 
   return (
-    <div style={{ paddingBottom: 80 }}>
+    <div style={{ paddingBottom: isDesktop ? 24 : 80, maxWidth: isDesktop ? 800 : undefined, marginLeft: isDesktop ? 'auto' : undefined, marginRight: isDesktop ? 'auto' : undefined }}>
       <div className="flex items-center justify-between border-b border-border" style={{ padding: '0 16px', height: 56 }}>
-        <h1 className="text-[15px] font-semibold text-text-primary">{t('movieRequest.title')}</h1>
+        <div className="flex items-center gap-3">
+          {!hasBackButton && <WebBackButton />}
+          <h1 className="text-[15px] font-semibold text-text-primary">{t('movieRequest.title')}</h1>
+        </div>
         <button onClick={() => navigate('/movie-requests/new')} className="flex items-center gap-1.5 bg-accent text-white text-[12px] font-semibold active:opacity-80 transition-opacity" style={{ height: 34, padding: '0 12px', borderRadius: 6 }}>
           <Plus size={14} /> {t('movieRequest.new')}
         </button>

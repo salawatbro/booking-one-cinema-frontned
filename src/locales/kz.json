@@ -11,6 +11,12 @@
     "selectLang": "Тілді таңдау",
     "profile": "Профиль"
   },
+  "auth": {
+    "login": "Кіру",
+    "loginTitle": "Жүйеге кіру",
+    "loginDescription": "Билет брондау үшін Telegram арқылы кіріңіз",
+    "loggingIn": "Кіру..."
+  },
   "home": {
     "search": "Кино іздеу...",
     "searchLabel": "Кино іздеу",

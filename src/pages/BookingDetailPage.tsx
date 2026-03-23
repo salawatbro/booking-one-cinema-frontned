@@ -8,6 +8,8 @@ import { storageUrl } from '@/lib/api';
 import { SkeletonBox } from '@/components/Skeleton';
 import type { Booking } from '@/types/api';
 import { useTelegramBackButton } from '@/hooks/useTelegramBackButton';
+import { WebBackButton } from '@/components/WebBackButton';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 const statusConfig: Record<Booking['status'], { bg: string; text: string; dot: string }> = {
   confirmed: { bg: 'bg-success-light', text: 'text-success', dot: 'bg-success' },
@@ -22,11 +24,12 @@ export function BookingDetailPage() {
   const { data: booking, isLoading, error } = useBooking(Number(id));
   const cancelBooking = useCancelBooking();
 
-  useTelegramBackButton(() => navigate(-1));
+  const isDesktop = useIsDesktop();
+  const { isAvailable: hasBackButton } = useTelegramBackButton(() => navigate(-1));
 
   if (isLoading) {
     return (
-      <div style={{ paddingBottom: 80 }}>
+      <div style={{ paddingBottom: isDesktop ? 24 : 80, maxWidth: isDesktop ? 640 : undefined, marginLeft: isDesktop ? 'auto' : undefined, marginRight: isDesktop ? 'auto' : undefined }}>
         <div className="flex items-center gap-3 border-b border-border" style={{ padding: '0 16px', height: 56 }}>
           <SkeletonBox style={{ height: 18, width: 100, borderRadius: 4 }} />
           <div className="ml-auto">
@@ -65,8 +68,9 @@ export function BookingDetailPage() {
   };
 
   return (
-    <div style={{ paddingBottom: 80 }}>
+    <div style={{ paddingBottom: isDesktop ? 24 : 80, maxWidth: isDesktop ? 640 : undefined, marginLeft: isDesktop ? 'auto' : undefined, marginRight: isDesktop ? 'auto' : undefined }}>
       <div className="flex items-center gap-3 border-b border-border" style={{ padding: '0 16px', height: 56 }}>
+        {!hasBackButton && <WebBackButton />}
         <h1 className="text-[15px] font-semibold text-text-primary">{t('booking.id', { id: booking.id })}</h1>
         <span className={cn('flex items-center gap-1.5 text-[11px] font-semibold ml-auto', config.bg, config.text)} style={{ padding: '3px 10px', borderRadius: 4 }}>
           <span className={cn('rounded-full', config.dot)} style={{ width: 6, height: 6 }} />

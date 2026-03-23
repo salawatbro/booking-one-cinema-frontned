@@ -4,11 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { languages } from '@/lib/constants';
 import { useProfile, useBookingStats, useSettings, useUpdateLanguage } from '@/hooks/useApi';
+import { useAuth } from '@/hooks/useAuth';
+import { isTelegram } from '@/lib/api';
 import { SkeletonBox } from '@/components/Skeleton';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 export function ProfilePage() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const { user: webUser, logout } = useAuth();
+  const isDesktop = useIsDesktop();
 
   const { data: profile, isLoading: profileLoading, error: profileError } = useProfile();
   const { data: stats, isLoading: statsLoading } = useBookingStats();
@@ -16,7 +21,7 @@ export function ProfilePage() {
   const updateLanguage = useUpdateLanguage();
 
   const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-  const photoUrl = tgUser?.photo_url;
+  const photoUrl = tgUser?.photo_url || webUser?.photo_url;
   const initials = profile ? (profile.first_name[0] || '') + (profile.last_name?.[0] || '') : '';
 
   const changeLang = (code: string) => {
@@ -34,7 +39,7 @@ export function ProfilePage() {
   }
 
   return (
-    <div style={{ paddingBottom: 80 }}>
+    <div style={{ paddingBottom: isDesktop ? 24 : 80, maxWidth: isDesktop ? 640 : undefined, marginLeft: isDesktop ? 'auto' : undefined, marginRight: isDesktop ? 'auto' : undefined }}>
       <div className="flex items-center gap-3" style={{ padding: '20px 16px' }}>
         {profileLoading ? (
           <>
@@ -152,9 +157,15 @@ export function ProfilePage() {
       </div>
 
       <div style={{ padding: '16px 16px 0' }}>
-        <button className="w-full flex items-center justify-center gap-2 text-danger text-[14px] font-medium border border-border active:opacity-70 transition-opacity" style={{ height: 44, borderRadius: 8 }}>
-          <LogOut size={16} /> {t('profile.logout')}
-        </button>
+        {!isTelegram() && (
+          <button
+            onClick={() => { logout(); navigate('/'); }}
+            className="w-full flex items-center justify-center gap-2 text-danger text-[14px] font-medium border border-border active:opacity-70 transition-opacity"
+            style={{ height: 44, borderRadius: 8 }}
+          >
+            <LogOut size={16} /> {t('profile.logout')}
+          </button>
+        )}
       </div>
     </div>
   );

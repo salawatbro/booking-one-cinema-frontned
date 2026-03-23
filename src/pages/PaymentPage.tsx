@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { formatPrice } from '@/lib/utils';
 import { hapticImpact } from '@/lib/haptic';
 import { useInitiatePayment, usePaymentStatus } from '@/hooks/useApi';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 const PAYMENT_TIMEOUT = 15 * 60;
 
@@ -12,6 +13,7 @@ export function PaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
   const totalPrice: number = location.state?.totalPrice || 0;
   const bookingId: number = location.state?.bookingId || 0;
   const [timeLeft, setTimeLeft] = useState(PAYMENT_TIMEOUT);
@@ -75,7 +77,7 @@ export function PaymentPage() {
   }
 
   return (
-    <div style={{ paddingBottom: 80 }}>
+    <div style={{ paddingBottom: isDesktop ? 24 : 80, maxWidth: isDesktop ? 640 : undefined, marginLeft: isDesktop ? 'auto' : undefined, marginRight: isDesktop ? 'auto' : undefined }}>
       <div className="flex items-center justify-center border-b border-border" style={{ height: 56 }}>
         <h1 className="text-[15px] font-semibold text-text-primary">{t('payment.title')}</h1>
       </div>

@@ -4,6 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { ToastProvider } from '@/hooks/useToast';
+import { AuthProvider } from '@/hooks/useAuth';
 import { SplashScreen } from '@/components/SplashScreen';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Header } from '@/components/Header';
@@ -20,6 +21,8 @@ import { SchedulePage } from '@/pages/SchedulePage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { MovieRequestsPage } from '@/pages/MovieRequestsPage';
 import { MovieRequestFormPage } from '@/pages/MovieRequestFormPage';
+import { LoginPage } from '@/pages/LoginPage';
+import { RequireAuth } from '@/components/RequireAuth';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -43,6 +46,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+    <AuthProvider>
     <ThemeProvider>
       <ToastProvider>
         {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
@@ -50,26 +54,33 @@ function App() {
           <BrowserRouter>
             <div className="min-h-screen bg-bg">
               <Header />
+              <main style={{ maxWidth: 1280, marginLeft: 'auto', marginRight: 'auto' }}>
               <Routes>
+                {/* Public routes */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/movies/:id" element={<MovieDetailPage />} />
-                <Route path="/seats/:showtimeId" element={<SeatSelectionPage />} />
-                <Route path="/booking-confirm/:showtimeId" element={<BookingConfirmPage />} />
-                <Route path="/payment" element={<PaymentPage />} />
-                <Route path="/booking-success" element={<BookingSuccessPage />} />
-                <Route path="/bookings" element={<BookingsPage />} />
-                <Route path="/bookings/:id" element={<BookingDetailPage />} />
                 <Route path="/schedule" element={<SchedulePage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/movie-requests" element={<MovieRequestsPage />} />
-                <Route path="/movie-requests/new" element={<MovieRequestFormPage />} />
+                <Route path="/login" element={<LoginPage />} />
+
+                {/* Protected routes */}
+                <Route path="/seats/:showtimeId" element={<RequireAuth><SeatSelectionPage /></RequireAuth>} />
+                <Route path="/booking-confirm/:showtimeId" element={<RequireAuth><BookingConfirmPage /></RequireAuth>} />
+                <Route path="/payment" element={<RequireAuth><PaymentPage /></RequireAuth>} />
+                <Route path="/booking-success" element={<RequireAuth><BookingSuccessPage /></RequireAuth>} />
+                <Route path="/bookings" element={<RequireAuth><BookingsPage /></RequireAuth>} />
+                <Route path="/bookings/:id" element={<RequireAuth><BookingDetailPage /></RequireAuth>} />
+                <Route path="/profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
+                <Route path="/movie-requests" element={<RequireAuth><MovieRequestsPage /></RequireAuth>} />
+                <Route path="/movie-requests/new" element={<RequireAuth><MovieRequestFormPage /></RequireAuth>} />
               </Routes>
+              </main>
               <BottomNav />
             </div>
           </BrowserRouter>
         </ErrorBoundary>
       </ToastProvider>
     </ThemeProvider>
+    </AuthProvider>
     </QueryClientProvider>
   );
 }

@@ -10,8 +10,17 @@ import type {
   ContactInfo,
 } from '@/types/api';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const MINIAPP_URL = import.meta.env.VITE_API_BASE_URL;
+const WEB_URL = import.meta.env.VITE_API_WEB_URL;
 const STORAGE_URL = import.meta.env.VITE_STORAGE_URL;
+
+export function isTelegram(): boolean {
+  return !!window.Telegram?.WebApp?.initData;
+}
+
+function getBaseUrl(): string {
+  return isTelegram() ? MINIAPP_URL : WEB_URL;
+}
 
 export function storageUrl(path: string | null): string | null {
   if (!path) return null;
@@ -31,15 +40,25 @@ class ApiError extends Error {
   }
 }
 
-async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+function getAuthHeader(): Record<string, string> {
   const tg = window.Telegram?.WebApp;
+  if (tg?.initData) {
+    return { 'Authorization': `tma ${tg.initData}` };
+  }
+  const token = localStorage.getItem('web_auth_token');
+  if (token) {
+    return { 'Authorization': `Bearer ${token}` };
+  }
+  return {};
+}
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
+async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const response = await fetch(`${getBaseUrl()}${endpoint}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      ...(tg?.initData ? { 'Authorization': `tma ${tg.initData}` } : {}),
+      ...getAuthHeader(),
       ...options.headers,
     },
   });
@@ -188,16 +207,13 @@ export async function getSettings() {
 }
 
 export async function downloadTicket(bookingId: number): Promise<void> {
-  const tg = window.Telegram?.WebApp;
   const ticket = await getBookingTicket(bookingId);
   const url = ticket.download_url.startsWith('http')
     ? ticket.download_url
     : `${STORAGE_URL}${ticket.download_url}`;
 
   const response = await fetch(url, {
-    headers: {
-      ...(tg?.initData ? { 'Authorization': `tma ${tg.initData}` } : {}),
-    },
+    headers: getAuthHeader(),
   });
 
   if (!response.ok) throw new ApiError('Download failed', response.status);

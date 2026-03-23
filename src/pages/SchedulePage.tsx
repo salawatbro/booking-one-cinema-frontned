@@ -6,11 +6,13 @@ import { useShowtimeCalendar, useShowtimes } from '@/hooks/useApi';
 import { storageUrl } from '@/lib/api';
 import { SkeletonBox, MovieCardSkeleton } from '@/components/Skeleton';
 import { DatePicker } from '@/components/DatePicker';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 export function SchedulePage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const isDesktop = useIsDesktop();
   const { data: calendar, isLoading: calendarLoading } = useShowtimeCalendar();
   const dates = calendar?.map((d) => d.date) || [];
   const [selectedDate, setSelectedDate] = useState('');
@@ -38,7 +40,7 @@ export function SchedulePage() {
   const movieEntries = Array.from(movieMap.entries());
 
   return (
-    <div style={{ paddingBottom: 80 }}>
+    <div style={{ paddingBottom: isDesktop ? 24 : 80 }}>
       {calendarLoading ? (
         <div className="flex gap-2" style={{ padding: '12px 16px' }}>
           {Array.from({ length: 5 }).map((_, i) => (
@@ -54,11 +56,11 @@ export function SchedulePage() {
           <p className="text-[13px] text-text-tertiary">Error: {showtimesError.message}</p>
         </div>
       ) : showtimesLoading ? (
-        <div className="grid grid-cols-2 gap-3" style={{ padding: '8px 16px 0' }}>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3" style={{ padding: '8px 16px 0' }}>
           {Array.from({ length: 4 }).map((_, i) => <MovieCardSkeleton key={i} />)}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3" style={{ padding: '8px 16px 0' }}>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3" style={{ padding: '8px 16px 0' }}>
           {movieEntries.map(([movieId, { movie, showtimes: movieShowtimes }]) => {
             return (
               <div key={movieId} className="bg-bg-secondary rounded-lg overflow-hidden">

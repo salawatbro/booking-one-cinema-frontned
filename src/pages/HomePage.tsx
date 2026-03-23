@@ -7,6 +7,7 @@ import { useFeaturedMovies, useMovies } from '@/hooks/useApi';
 import { FeaturedSkeleton, MovieCardSkeleton } from '@/components/Skeleton';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { useQueryClient } from '@tanstack/react-query';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 export function HomePage() {
   const { t } = useTranslation();
@@ -33,11 +34,12 @@ export function HomePage() {
     onRefresh: handleRefresh,
   });
 
+  const isDesktop = useIsDesktop();
   const showIndicator = pullDistance > 0 || isRefreshing;
 
   return (
     <div
-      style={{ paddingBottom: 80 }}
+      style={{ paddingBottom: isDesktop ? 24 : 80 }}
       onTouchStart={handlers.onTouchStart}
       onTouchMove={handlers.onTouchMove}
       onTouchEnd={handlers.onTouchEnd}
@@ -104,11 +106,11 @@ export function HomePage() {
             <p className="text-[13px] text-text-tertiary">Error: {moviesError.message}</p>
           </div>
         ) : moviesLoading ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {Array.from({ length: 6 }).map((_, i) => <MovieCardSkeleton key={i} />)}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {movies?.map((movie) => (
               <MovieCard key={movie.id} movie={movie} />
             ))}

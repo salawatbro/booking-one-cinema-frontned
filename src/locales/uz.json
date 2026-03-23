@@ -11,6 +11,12 @@
     "selectLang": "Tilni tanlash",
     "profile": "Profil"
   },
+  "auth": {
+    "login": "Kirish",
+    "loginTitle": "Tizimga kirish",
+    "loginDescription": "Bron qilish uchun Telegram orqali tizimga kiring",
+    "loggingIn": "Kirilmoqda..."
+  },
   "home": {
     "search": "Kino qidirish...",
     "searchLabel": "Kino qidirish",

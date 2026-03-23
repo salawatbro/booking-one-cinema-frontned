@@ -3,11 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Clock, MapPin, Armchair } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SeatGrid } from '@/components/SeatGrid';
-import { formatPrice, formatTime, formatDuration } from '@/lib/utils';
+import { cn, formatPrice, formatTime, formatDuration } from '@/lib/utils';
 import { useShowtime, useShowtimeSeats } from '@/hooks/useApi';
 import { SkeletonBox } from '@/components/Skeleton';
 import { useTelegramMainButton } from '@/hooks/useTelegramMainButton';
 import { useTelegramBackButton } from '@/hooks/useTelegramBackButton';
+import { WebBackButton } from '@/components/WebBackButton';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 export function SeatSelectionPage() {
   const { showtimeId } = useParams();
@@ -31,8 +33,9 @@ export function SeatSelectionPage() {
     navigate(`/booking-confirm/${showtimeId}`, { state: { selectedSeats } });
   }, [navigate, showtimeId, selectedSeats]);
 
-  useTelegramBackButton(() => navigate(-1));
-  useTelegramMainButton({
+  const isDesktop = useIsDesktop();
+  const { isAvailable: hasBackButton } = useTelegramBackButton(() => navigate(-1));
+  const { isAvailable: hasMainButton } = useTelegramMainButton({
     text: `${t('seats.continue')} — ${formatPrice(totalPrice)}`,
     onClick: handleContinue,
     visible: selectedSeats.length > 0,
@@ -52,6 +55,7 @@ export function SeatSelectionPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex items-center gap-3 border-b border-border" style={{ padding: '0 16px', height: 56 }}>
+        {!hasBackButton && <WebBackButton />}
         <div className="min-w-0 flex-1">
           {isLoading ? (
             <>
@@ -93,7 +97,13 @@ export function SeatSelectionPage() {
       </div>
 
       {selectedSeats.length > 0 && (
-        <div className="fixed bottom-14 left-0 right-0 bg-bg-card border-t border-border" style={{ padding: '12px 16px 20px' }}>
+        <div
+          className={cn(
+            'bg-bg-card border-t border-border',
+            !isDesktop && 'fixed bottom-14 left-0 right-0',
+          )}
+          style={{ padding: '12px 16px 20px' }}
+        >
           <div className="flex items-center gap-1.5 flex-wrap" style={{ marginBottom: 10 }}>
             <Armchair size={14} className="text-text-tertiary" />
             {selected.map((s) => (
@@ -107,6 +117,15 @@ export function SeatSelectionPage() {
               <p className="text-[11px] text-text-tertiary">{t('seats.seatsSelected', { count: selectedSeats.length })}</p>
               <p className="text-[20px] font-bold text-text-primary">{formatPrice(totalPrice)}</p>
             </div>
+            {!hasMainButton && (
+              <button
+                onClick={handleContinue}
+                className="bg-accent text-white font-semibold text-[14px]"
+                style={{ padding: '10px 24px', borderRadius: 8 }}
+              >
+                {t('seats.continue')}
+              </button>
+            )}
           </div>
         </div>
       )}

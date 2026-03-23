@@ -3,14 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { Send, Film, Calendar, Clock, Users, Link, Hash } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTelegramBackButton } from '@/hooks/useTelegramBackButton';
+import { WebBackButton } from '@/components/WebBackButton';
 import { useCreateMovieRequest } from '@/hooks/useApi';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 export function MovieRequestFormPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const createMovieRequest = useCreateMovieRequest();
 
-  useTelegramBackButton(() => navigate(-1));
+  const isDesktop = useIsDesktop();
+  const { isAvailable: hasBackButton } = useTelegramBackButton(() => navigate(-1));
 
   const [form, setForm] = useState({
     movie_name: '', movie_year: '', trailer_url: '',
@@ -39,8 +42,9 @@ export function MovieRequestFormPage() {
   const inputCls = 'w-full bg-bg-secondary border border-border text-[14px] text-text-primary placeholder:text-text-tertiary outline-none focus:border-accent transition-colors';
 
   return (
-    <div style={{ paddingBottom: 80 }}>
-      <div className="flex items-center border-b border-border" style={{ padding: '0 16px', height: 56 }}>
+    <div style={{ paddingBottom: isDesktop ? 24 : 80, maxWidth: isDesktop ? 640 : undefined, marginLeft: isDesktop ? 'auto' : undefined, marginRight: isDesktop ? 'auto' : undefined }}>
+      <div className="flex items-center gap-3 border-b border-border" style={{ padding: '0 16px', height: 56 }}>
+        {!hasBackButton && <WebBackButton />}
         <h1 className="text-[15px] font-semibold text-text-primary">{t('movieRequest.formTitle')}</h1>
       </div>
 

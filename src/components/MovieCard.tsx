@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { Clock } from 'lucide-react';
+import { Clock, Ticket } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Movie } from '@/types/api';
 import { formatDuration } from '@/lib/utils';
 import { storageUrl } from '@/lib/api';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 interface MovieCardProps {
   movie: Movie;
@@ -13,8 +14,59 @@ interface MovieCardProps {
 export function MovieCard({ movie, variant = 'grid' }: MovieCardProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
 
   if (variant === 'featured') {
+    // Desktop: side-by-side (poster left, info right)
+    if (isDesktop) {
+      return (
+        <div
+          className="flex-shrink-0 flex bg-bg-secondary overflow-hidden"
+          style={{ width: 620, height: 340, borderRadius: 8 }}
+        >
+          <button
+            onClick={() => navigate(`/movies/${movie.id}`)}
+            className="flex-shrink-0 h-full"
+            style={{ width: 230 }}
+          >
+            <div className="h-full w-full bg-bg-secondary">
+              {movie.poster_url ? (
+                <img src={storageUrl(movie.poster_url)!} alt={movie.name} className="h-full w-full object-cover" loading="lazy" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-text-tertiary text-[12px]">{t('movie.noPoster')}</div>
+              )}
+            </div>
+          </button>
+          <div className="flex flex-col justify-between flex-1 min-w-0" style={{ padding: 24 }}>
+            <div>
+              <h3 className="text-[20px] font-bold text-text-primary leading-snug line-clamp-2">{movie.name}</h3>
+              <div className="flex items-center gap-3 flex-wrap" style={{ marginTop: 12 }}>
+                <span className="flex items-center gap-1 text-[13px] text-text-secondary">
+                  <Clock size={14} /> {formatDuration(movie.duration)}
+                </span>
+                <span className="flex items-center gap-1 text-[13px] text-accent font-medium">
+                  <Ticket size={14} /> {t('movie.showtimesAvailable', { count: movie.upcoming_showtimes_count })}
+                </span>
+              </div>
+              {movie.description && (
+                <p className="text-[13px] text-text-tertiary leading-relaxed line-clamp-4" style={{ marginTop: 12 }}>
+                  {movie.description}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={() => navigate(`/movies/${movie.id}`)}
+              className="self-start bg-accent text-white text-[14px] font-semibold active:opacity-80 transition-opacity"
+              style={{ padding: '10px 24px', borderRadius: 6 }}
+            >
+              {t('movie.book')}
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // Mobile: poster with overlay
     return (
       <div className="relative flex-shrink-0 overflow-hidden rounded-lg" style={{ width: 'calc(100vw - 50px)' }}>
         <button onClick={() => navigate(`/movies/${movie.id}`)} className="w-full">

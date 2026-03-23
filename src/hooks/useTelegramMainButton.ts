@@ -9,13 +9,15 @@ interface MainButtonOptions {
   textColor?: string;
 }
 
-export function useTelegramMainButton({ text, onClick, visible = true, isLoading = false, color, textColor }: MainButtonOptions): void {
+export function useTelegramMainButton({ text, onClick, visible = true, isLoading = false, color, textColor }: MainButtonOptions): { isAvailable: boolean } {
   const callbackRef = useRef(onClick);
   callbackRef.current = onClick;
 
   const stableHandler = useRef(() => {
     callbackRef.current();
   });
+
+  const isAvailable = !!window.Telegram?.WebApp?.MainButton;
 
   useEffect(() => {
     const mainButton = window.Telegram?.WebApp?.MainButton;
@@ -47,4 +49,6 @@ export function useTelegramMainButton({ text, onClick, visible = true, isLoading
       mainButton.hideProgress();
     };
   }, [text, visible, isLoading, color, textColor]);
+
+  return { isAvailable };
 }

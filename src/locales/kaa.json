@@ -11,6 +11,12 @@
     "selectLang": "Tildi tanlań",
     "profile": "Profil"
   },
+  "auth": {
+    "login": "Kiriw",
+    "loginTitle": "Sistemaǵa kiriw",
+    "loginDescription": "Bilet bronlaw ushın Telegram arqalı kirińiz",
+    "loggingIn": "Kirilmekte..."
+  },
   "home": {
     "search": "Kino izlew...",
     "searchLabel": "Kino izlew",

@@ -6,11 +6,13 @@ import { useBookings, useBookingStats } from '@/hooks/useApi';
 import { SkeletonBox } from '@/components/Skeleton';
 import { Ticket } from 'lucide-react';
 import type { Booking } from '@/types/api';
+import { useIsDesktop } from '@/hooks/useIsDesktop';
 
 type TabFilter = 'all' | Booking['status'];
 
 export function BookingsPage() {
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
   const [activeTab, setActiveTab] = useState<TabFilter>('all');
 
   const { data: bookings, isLoading: bookingsLoading, error: bookingsError } = useBookings(activeTab === 'all' ? undefined : activeTab);
@@ -24,7 +26,7 @@ export function BookingsPage() {
   ];
 
   return (
-    <div style={{ paddingBottom: 80 }}>
+    <div style={{ paddingBottom: isDesktop ? 24 : 80, maxWidth: isDesktop ? 900 : undefined, marginLeft: isDesktop ? 'auto' : undefined, marginRight: isDesktop ? 'auto' : undefined }}>
       <div className="grid grid-cols-4" style={{ padding: '12px 16px', gap: 6 }}>
         {statsLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
