@@ -7,13 +7,13 @@ function getHaptic(): TelegramWebApp['HapticFeedback'] | null {
 }
 
 export function hapticImpact(style: 'light' | 'medium' | 'heavy'): void {
-  getHaptic()?.impactOccurred(style);
+  try { getHaptic()?.impactOccurred(style); } catch { /* unsupported */ }
 }
 
 export function hapticNotification(type: 'success' | 'error' | 'warning'): void {
-  getHaptic()?.notificationOccurred(type);
+  try { getHaptic()?.notificationOccurred(type); } catch { /* unsupported */ }
 }
 
 export function hapticSelection(): void {
-  getHaptic()?.selectionChanged();
+  try { getHaptic()?.selectionChanged(); } catch { /* unsupported */ }
 }
