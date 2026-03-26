@@ -36,7 +36,7 @@ export function SeatSelectionPage() {
 
   const isDesktop = useIsDesktop();
   const { isAvailable: hasBackButton } = useTelegramBackButton(() => navigate(-1));
-  useTelegramMainButton({
+  const { isAvailable: hasMainButton } = useTelegramMainButton({
     text: `${t('seats.continue')} — ${formatPrice(totalPrice)}`,
     onClick: handleContinue,
     visible: selectedSeats.length > 0,
@@ -118,13 +118,15 @@ export function SeatSelectionPage() {
             </div>
           </div>
 
-          <button
-            onClick={handleContinue}
-            className="w-full bg-accent text-white font-semibold text-[15px]"
-            style={{ padding: '14px 0', borderRadius: 8 }}
-          >
-            {t('seats.continue')}
-          </button>
+          {!hasMainButton && (
+            <button
+              onClick={handleContinue}
+              className="w-full bg-accent text-white font-semibold text-[15px]"
+              style={{ padding: '14px 0', borderRadius: 8 }}
+            >
+              {t('seats.continue')}
+            </button>
+          )}
         </>
       )}
     </div>
@@ -208,7 +210,7 @@ export function SeatSelectionPage() {
         ) : null}
       </div>
 
-      {selectedSeats.length > 0 && (
+      {selectedSeats.length > 0 && !hasMainButton && (
         <div
           className="bg-bg-card border-t border-border fixed left-0 right-0"
           style={{ padding: '12px 16px 20px', bottom: 60 }}

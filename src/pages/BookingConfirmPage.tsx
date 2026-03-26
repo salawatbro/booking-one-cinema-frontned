@@ -48,7 +48,7 @@ export function BookingConfirmPage() {
 
   const isDesktop = useIsDesktop();
   const { isAvailable: hasBackButton } = useTelegramBackButton(() => navigate(-1));
-  useTelegramMainButton({
+  const { isAvailable: hasMainButton } = useTelegramMainButton({
     text: createBooking.isPending
       ? t('booking.processing')
       : t('booking.bookButton', { price: formatPrice(totalPrice) }),
@@ -170,7 +170,7 @@ export function BookingConfirmPage() {
           <div className="flex-shrink-0 flex flex-col border border-border bg-bg-card" style={{ width: 340, borderRadius: 8, padding: 20, gap: 16, position: 'sticky', top: 80 }}>
             {paymentSummary}
             {errorBlock}
-            {bookButton}
+            {!hasMainButton && bookButton}
           </div>
         </div>
       </div>
@@ -192,12 +192,14 @@ export function BookingConfirmPage() {
 
       {errorBlock && <div style={{ padding: '16px 16px 0' }}>{errorBlock}</div>}
 
-      <div
-        className="bg-bg-card border-t border-border fixed left-0 right-0"
-        style={{ padding: '12px 16px 20px', bottom: 60 }}
-      >
-        {bookButton}
-      </div>
+      {!hasMainButton && (
+        <div
+          className="bg-bg-card border-t border-border fixed left-0 right-0"
+          style={{ padding: '12px 16px 20px', bottom: 60 }}
+        >
+          {bookButton}
+        </div>
+      )}
     </div>
   );
 }
